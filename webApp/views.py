@@ -16,7 +16,45 @@ def twittertest(request):
 
     t = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
     
-    result = t.search.tweets(q="test")
+    statuses = []
+    count = 0
+
+    result = t.search.tweets(q="$APPL -filter:retweets", count=100, lang="en", result_type="recent")
+
+    while (len(result["statuses"]) > 0 and count < 5):
+        # WARNING: this code currently returns the same tweets 5 times, I think.
+        count += 1
+        statuses = statuses + result["statuses"]
+        next_max_id = result["search_metadata"]["max_id"] - 1
+        result = t.search.tweets(q="$APPL -filter:retweets", count=100, lang="en", result_type="recent", max_id = next_max_id)
+
+    statuses.sort(key=thing)
+
+    responseText = """<table border=1>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Created</th>
+            <th>Is Retweet</th>
+            <th>Tweet</th>
+        </tr>
+    </thead>
+    <tbody>"""
+
+    for status in statuses:
+        s = """
+            <tr>
+                <td>{id}</td>
+                <td>{created_at}</td>
+                <td>{is_retweet}</td>
+                <td>{text}</td>
+            </tr>
+        """
+        responseText += s.format(id=status["id"], created_at=status["created_at"], text=status["text"], is_retweet="retweeted_status" in status)
+
+    responseText += "</tbody></table>"
+    return HttpResponse(responseText)
 
 
-    return HttpResponse("Twitter test" + str(len(result)))
+def thing (e):
+    return e["id"]
