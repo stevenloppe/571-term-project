@@ -19,38 +19,45 @@ def twittertest(request):
     statuses = []
     count = 0
 
-    result = t.search.tweets(q="$APPL -filter:retweets", count=100, lang="en", result_type="recent")
+    result = t.search.tweets(q="$TSLA -filter:retweets -filter:links", count=100, lang="en", result_type="recent", tweet_mode="extended")
 
     while (len(result["statuses"]) > 0 and count < 5):
         # WARNING: this code currently returns the same tweets 5 times, I think.
         count += 1
         statuses = statuses + result["statuses"]
-        next_max_id = result["search_metadata"]["max_id"] - 1
-        result = t.search.tweets(q="$APPL -filter:retweets", count=100, lang="en", result_type="recent", max_id = next_max_id)
+        next_max_id = min_id(result["statuses"]) - 1
+        result = t.search.tweets(q="$TSLA -filter:retweets -filter:links", count=100, lang="en", result_type="recent", tweet_mode="extended", max_id = next_max_id)
 
     statuses.sort(key=thing)
+    statuses.reverse()
 
     responseText = """<table border=1>
     <thead>
         <tr>
-            <th>Id</th>
+            <th>#</th>
+            <!--<th>Id</th>-->
             <th>Created</th>
             <th>Is Retweet</th>
+            <th>Truncated</th>
             <th>Tweet</th>
         </tr>
     </thead>
     <tbody>"""
 
+    status_count = 0
     for status in statuses:
+        status_count += 1
         s = """
             <tr>
-                <td>{id}</td>
+                <td>{status_count}</td>
+                <!--<td>{id}</td>-->
                 <td>{created_at}</td>
                 <td>{is_retweet}</td>
+                <td>{is_truncated}</td>
                 <td>{text}</td>
             </tr>
         """
-        responseText += s.format(id=status["id"], created_at=status["created_at"], text=status["text"], is_retweet="retweeted_status" in status)
+        responseText += s.format(status_count=status_count, id=status["id"], created_at=status["created_at"], text=status["full_text"], is_retweet="retweeted_status" in status, is_truncated=status["truncated"])
 
     responseText += "</tbody></table>"
     return HttpResponse(responseText)
@@ -58,3 +65,12 @@ def twittertest(request):
 
 def thing (e):
     return e["id"]
+
+def min_id(statuses):
+    min_id = statuses[0]["id"]
+
+    for status in statuses:
+        if status["id"] < min_id:
+            min_id = status["id"]
+
+    return min_id
