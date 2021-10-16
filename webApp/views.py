@@ -22,7 +22,6 @@ def twittertest(request):
     result = t.search.tweets(q="$TSLA -filter:retweets -filter:links", count=100, lang="en", result_type="recent", tweet_mode="extended")
 
     while (len(result["statuses"]) > 0 and count < 5):
-        # WARNING: this code currently returns the same tweets 5 times, I think.
         count += 1
         statuses = statuses + result["statuses"]
         next_max_id = min_id(result["statuses"]) - 1
