@@ -2,33 +2,20 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from twitter import *
 
+from webApp.twitter_stock import TwitterStock
+
 
 def index(request):
     return HttpResponse("Hello, world.")
 
 
 def twittertest(request):
-    API_KEY = "Fy2ufDgWjZppcZcOIE4UyW15J"
-    API_KEY_SECRET = "NXsPLbdP5TDx2PwYcUHHTpB1liyhwtSMTGR6VNVq16b9YstmtD"
-    BEARER_TOKEN = "AAAAAAAAAAAAAAAAAAAAAGbBUgEAAAAAtGrIWJwh8C9Y34dWbtKivErpsYw%3D2QwSepZaFKmAaFiwgLJjGokfsErKCavVmATg5JBEllpDIooRy9"
-    ACCESS_TOKEN = "1445439605847642113-v2YUfIiTQVAuS4nvZLHI7ysd7cTl0d"
-    ACCESS_TOKEN_SECRET = "52AtMUpzJZlkNvTarMKh9xBkAPcPZzRAcL4IRk02CKlGI"
+    # use ticker symbol in "tick" url param or default to APPL
+    ticker = request.GET["ticker"] if "ticker" in request.GET else "APPL"
 
-    t = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
-    
-    statuses = []
-    count = 0
+    twitterStock = TwitterStock()
+    statuses = twitterStock.getTweetsForStock(ticker)
 
-    result = t.search.tweets(q="$TSLA -filter:retweets -filter:links", count=100, lang="en", result_type="recent", tweet_mode="extended")
-
-    while (len(result["statuses"]) > 0 and count < 5):
-        count += 1
-        statuses = statuses + result["statuses"]
-        next_max_id = min_id(result["statuses"]) - 1
-        result = t.search.tweets(q="$TSLA -filter:retweets -filter:links", count=100, lang="en", result_type="recent", tweet_mode="extended", max_id = next_max_id)
-
-    statuses.sort(key=thing)
-    statuses.reverse()
 
     responseText = """<table border=1>
     <thead>
@@ -62,14 +49,5 @@ def twittertest(request):
     return HttpResponse(responseText)
 
 
-def thing (e):
-    return e["id"]
 
-def min_id(statuses):
-    min_id = statuses[0]["id"]
 
-    for status in statuses:
-        if status["id"] < min_id:
-            min_id = status["id"]
-
-    return min_id
