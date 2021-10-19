@@ -1,0 +1,29 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'webApp/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'webApp/css/bootstrap.css' %}"/>
+    <!-- https://getbootstrap.com/docs/5.1/ -->
+    <title>Stock Sentiment Tracker</title>
+</head>
+<body>
+    <main>
+        <h1 class="website-name">Stock Sentiment Tracker</h1>
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+              <label for="ticker" class="col-form-label">Enter stock ticker:</label>
+            </div>
+            <div class="col-auto placeholderasdf" data-placeholder="$">
+              <input type="text" id="inputPassword6" class="form-control foo" value="">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" type="button">Search</button>
+            </div>
+        </div>    
+    </main>
+</body>
