@@ -13,7 +13,12 @@ class TwitterStock:
 
 
     def getTweetsForStock(self, ticker, filter_retweets=True, filter_links=True):
-        
+        # TODO: Remove tweets that reference multiple stock tickers
+        # TODO: Update Readme to include all install instructions necessary to get twitter working
+        # TODO: Extract extra metadata info into its own object (retweets, date retrieved, author, author followers)
+
+
+
         # Remove retweets
         retweets = "-filter:retweets" if filter_retweets else ""
         
