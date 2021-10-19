@@ -1,12 +1,19 @@
 from django.shortcuts import render
 from django.http import HttpResponse
-from twitter import *
+from django.views import generic
 
+from twitter import *
 from webApp.twitter_stock import TwitterStock
 
 
+
+
+TEMPLATE_DIRS = (
+    'os.path.join(BASE_DIR, "templates"),'
+)
+
 def index(request):
-    return HttpResponse("Hello, world.")
+    return render(request,"index.html")
 
 
 def twittertest(request):
