@@ -2,16 +2,38 @@ from twitter import *
 from datetime import datetime
 
 class Tweet:
-    def __init__(self, id, created_at, text, ticker, is_retweet):
+    def __init__(self, id, created_at, text, ticker, is_retweet, retweet_count, author, symbols):
         self.id = id
         self.created_at = created_at
         self.text = text
         self.ticker = ticker
-
         self.is_retweet = is_retweet
+        self.retweet_count = retweet_count
+        
+        # These are the symbols that twitter says are in the tweet
+
+        
+        # BUG: Twitter fails to identify stock symbols when they end with ellipses, like so:
+        #   '@Kristennetten There’s a chance that by then I’m retired thanks to $TSLA… making it possible to do things for the less fortunate…'    
+        #   '@Keubiko Example: there’s a guy who named himself deep value on Twitter who’s bullish on $tsla…'
+        # 
+        # TODO: Perhaps we should manually extract these? Is this easy? I think 
+        #   it would require knowing all stock symbols else we risk filtering 
+        #   out tweets that contain strings like "$cash money$" because we 
+        #   would assume that "$cash" was a stock symbol even though it isn't.
+        self.symbols = symbols
 
         # We might want to know when the info about a tweet was gathered because that will affect the retweet and follower counts
-        self.fetched_at = datetime.now() 
+        self.fetched_at = datetime.now()
+
+        self.author = author
+
+class Author:
+    def __init__(self, id, name, followers_count, created_at):
+        self.id  = id
+        self.name = name
+        self.followers_count = followers_count
+        self.created_at = created_at
         
 
 
@@ -67,7 +89,10 @@ class TwitterStock:
         statuses.sort(key=self.extract_id)
         statuses.reverse()
 
-        return statuses
+        # Filter any tweets with more than 1 stock symbol in them
+        statuses1 = [s for s in statuses if len(s.symbols) <= 1]
+
+        return statuses1
 
 
     # Helper functions
@@ -87,7 +112,9 @@ class TwitterStock:
     def extractTweets(self, statuses, ticker):
         result = []
         for s in statuses:
-            tweet = Tweet(s["id"], s["created_at"], s["full_text"], ticker, "retweeted_status" in s)
+            author = Author(s["user"]["id"], s["user"]["name"], s["user"]["followers_count"], s["user"]["created_at"])
+            symbols = [symbol["text"] for symbol in s["entities"]["symbols"]]
+            tweet = Tweet(s["id"], s["created_at"], s["full_text"], ticker, "retweeted_status" in s, s["retweet_count"], author, symbols)
             result.append(tweet)
 
         return result

@@ -30,7 +30,7 @@ def twittertest(request):
             <th>#</th>
             <!--<th>Id</th>-->
             <th>Created</th>
-            <th>Is Retweet</th>
+            <!--<th>Is Retweet</th>-->
             <th>Tweet</th>
         </tr>
     </thead>
@@ -44,7 +44,7 @@ def twittertest(request):
                 <td>{status_count}</td>
                 <!--<td>{id}</td>-->
                 <td>{created_at}</td>
-                <td>{is_retweet}</td>
+                <!--<td>{is_retweet}</td>-->
                 <td>{text}</td>
             </tr>
         """
