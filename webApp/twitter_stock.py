@@ -1,4 +1,20 @@
 from twitter import *
+from datetime import datetime
+
+class Tweet:
+    def __init__(self, id, created_at, text, ticker, is_retweet):
+        self.id = id
+        self.created_at = created_at
+        self.text = text
+        self.ticker = ticker
+
+        self.is_retweet = is_retweet
+
+        # We might want to know when the info about a tweet was gathered because that will affect the retweet and follower counts
+        self.fetched_at = datetime.now() 
+        
+
+
 
 class TwitterStock:
     
@@ -16,8 +32,6 @@ class TwitterStock:
         # TODO: Remove tweets that reference multiple stock tickers
         # TODO: Update Readme to include all install instructions necessary to get twitter working
         # TODO: Extract extra metadata info into its own object (retweets, date retrieved, author, author followers)
-
-
 
         # Remove retweets
         retweets = "-filter:retweets" if filter_retweets else ""
@@ -38,7 +52,7 @@ class TwitterStock:
         }
 
         result = self.twitter.search.tweets(**args)
-        statuses = [] + result["statuses"]
+        statuses = [] + self.extractTweets(result["statuses"], ticker)
         api_requests = 1
 
         ## as long as the last api request returned some results AND
@@ -46,7 +60,7 @@ class TwitterStock:
         while (len(result["statuses"]) > 0 and api_requests < 5):
             args["max_id"] = self.min_id(statuses) - 1
             result = self.twitter.search.tweets(**args)
-            statuses += result["statuses"]
+            statuses += self.extractTweets(result["statuses"], ticker)
             api_requests += 1
         
         # Sorting by ID and reversing gives us the newest tweets first
@@ -59,16 +73,26 @@ class TwitterStock:
     # Helper functions
 
     def extract_id(self, e):
-        return e["id"]
+        return e.id
 
     def min_id(self, statuses):
-        min_id = statuses[0]["id"]
+        min_id = statuses[0].id
 
         for status in statuses:
-            if status["id"] < min_id:
-                min_id = status["id"]
+            if status.id < min_id:
+                min_id = status.id
 
         return min_id
+
+    def extractTweets(self, statuses, ticker):
+        result = []
+        for s in statuses:
+            tweet = Tweet(s["id"], s["created_at"], s["full_text"], ticker, "retweeted_status" in s)
+            result.append(tweet)
+
+        return result
+            
+            
 
         
 
