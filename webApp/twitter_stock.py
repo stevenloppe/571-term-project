@@ -10,8 +10,6 @@ class Tweet:
         self.is_retweet = is_retweet
         self.retweet_count = retweet_count
         
-        # These are the symbols that twitter says are in the tweet
-
         
         # BUG: Twitter fails to identify stock symbols when they end with ellipses, like so:
         #   '@Kristennetten There’s a chance that by then I’m retired thanks to $TSLA… making it possible to do things for the less fortunate…'    
@@ -21,6 +19,8 @@ class Tweet:
         #   it would require knowing all stock symbols else we risk filtering 
         #   out tweets that contain strings like "$cash money$" because we 
         #   would assume that "$cash" was a stock symbol even though it isn't.
+        
+        # These are the symbols that twitter says are in the tweet
         self.symbols = symbols
 
         # We might want to know when the info about a tweet was gathered because that will affect the retweet and follower counts
@@ -51,10 +51,8 @@ class TwitterStock:
 
 
     def getTweetsForStock(self, ticker, filter_retweets=True, filter_links=True):
-        # TODO: Remove tweets that reference multiple stock tickers
         # TODO: Update Readme to include all install instructions necessary to get twitter working
-        # TODO: Extract extra metadata info into its own object (retweets, date retrieved, author, author followers)
-
+        
         # Remove retweets
         retweets = "-filter:retweets" if filter_retweets else ""
         
