@@ -5,5 +5,7 @@
 http://127.0.0.1:8000/admin/
 
 Admin login information
-Username: cpsc571project
-password: d?!q4k\>6)D2j^{C
+
+Username: ```cpsc571project```
+
+password: ```d?!q4k\>6)D2j^{C```
