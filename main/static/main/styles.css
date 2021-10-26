@@ -1,0 +1,43 @@
+html, body {
+    margin: 0;
+    border: 0;
+    padding: 0;
+    background-color: #fff;
+  }
+  
+  main {
+    margin: auto;
+    width: 50%;
+    padding: 20px;
+    padding-top: 15%;
+  }
+  
+  main > h1 {
+    text-align: center;
+    font-size: 3.5em;
+    padding-bottom: 2rem;
+    justify-content: center;
+
+  }
+  
+.searchbar
+{
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+  .addDollarSymbol
+  {
+      position: relative;
+  }
+  
+  .addDollarSymbol::after
+  {
+      position: absolute;
+      left: 4px;
+      top: 7px;
+      content: attr(data-placeholder);
+      pointer-events: none;
+      opacity: 0.65;
+  }
