@@ -1,19 +1,41 @@
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.views import generic
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404, render
+from .models import StockAnalysis
 
 from twitter import *
-from webApp.twitter_stock import TwitterStock
-
-
-
+from main.twitter_stock import TwitterStock
 
 TEMPLATE_DIRS = (
     'os.path.join(BASE_DIR, "templates"),'
 )
 
+
 def index(request):
+
+    if request.method == 'GET':
+        searchquery = request.GET.get('search', None)
+        if type(searchquery) == str:
+            return redirect('/'+searchquery)
+
     return render(request,"index.html")
+
+
+def stockdetails(request, sa_stockTicker):
+    if sa_stockTicker.endswith("/"):
+        sa_stockTicker = sa_stockTicker[:-1]
+
+    try:
+        stock = get_object_or_404(StockAnalysis, stockTicker=sa_stockTicker)
+    except StockAnalysis.DoesNotExist:
+        #TODO: Run the method to calcuate sentiment and add it to the database
+        raise Http404("To be updated")
+    #if (stock.is_outdated)
+        #TODO: Run the method to calcuate sentiment and update the database
+    return render(request, 'stockdetails.html', { 'stock' : stock })
 
 
 def twittertest(request):

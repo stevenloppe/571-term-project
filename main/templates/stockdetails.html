@@ -1,0 +1,23 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}"/>
+    <title>{{stock.stockTicker}} - Stock Sentiment Tracker</title>
+</head>
+<body>
+    <main>
+        <h2 class="stock-name">Stock Ticker: ${{stock.stockTicker}}</h2>
+        <h3>Last updated: {{stock.lastUpdated}} UTC</h3>
+        <br>
+        <p>numTweets: {{stock.numTweets}}</p>
+        <p>positiveSentiment: {{stock.positiveSentiment}}</p>
+        <p>negativeSentiment: {{stock.negativeSentiment}}</p>
+        <p>Highlighted Tweets:</p>
+    </main>
+</body>
