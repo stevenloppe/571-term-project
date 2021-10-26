@@ -52,8 +52,7 @@ def twittertest(request):
             <th>#</th>
             <!--<th>Id</th>-->
             <th>Created</th>
-            <th>Is Retweet</th>
-            <th>Truncated</th>
+            <!--<th>Is Retweet</th>-->
             <th>Tweet</th>
         </tr>
     </thead>
@@ -67,16 +66,11 @@ def twittertest(request):
                 <td>{status_count}</td>
                 <!--<td>{id}</td>-->
                 <td>{created_at}</td>
-                <td>{is_retweet}</td>
-                <td>{is_truncated}</td>
+                <!--<td>{is_retweet}</td>-->
                 <td>{text}</td>
             </tr>
         """
-        responseText += s.format(status_count=status_count, id=status["id"], created_at=status["created_at"], text=status["full_text"], is_retweet="retweeted_status" in status, is_truncated=status["truncated"])
+        responseText += s.format(status_count=status_count, id=status.id, created_at=status.created_at, text=status.text, is_retweet=status.is_retweet)
 
     responseText += "</tbody></table>"
     return HttpResponse(responseText)
-
-
-
-
