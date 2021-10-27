@@ -1,10 +1,13 @@
 from twitter import *
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class Tweet:
     def __init__(self, id, created_at, text, ticker, is_retweet, retweet_count, author, symbols):
         self.id = id
-        self.created_at = created_at
+
+        # https://stackoverflow.com/a/7711869
+        self.created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
+        
         self.text = text
         self.ticker = ticker
         self.is_retweet = is_retweet
@@ -33,7 +36,9 @@ class Author:
         self.id  = id
         self.name = name
         self.followers_count = followers_count
-        self.created_at = created_at
+
+        # https://stackoverflow.com/a/7711869
+        self.created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
         
 
 
@@ -75,9 +80,18 @@ class TwitterStock:
         statuses = [] + self.extractTweets(result["statuses"], ticker)
         api_requests = 1
 
+
+        # Don't fetch tweets older than this
+        now = datetime.now()
+        yesterday = now - timedelta(days=1)
+
+
+        oldest_tweet_datetime = min(statuses, key=lambda s: s.created_at).created_at
+
         ## as long as the last api request returned some results AND
-        #  we haven't hit the hardcoded api request limit, keep getting results
-        while (len(result["statuses"]) > 0 and api_requests < 5):
+        #  we haven't hit the hardcoded api request limit, keep getting results AND
+        #  we haven't started retrieving tweets more than 24 hours old
+        while (len(result["statuses"]) > 0 and api_requests < 20 and oldest_tweet_datetime > yesterday):
             args["max_id"] = self.min_id(statuses) - 1
             result = self.twitter.search.tweets(**args)
             statuses += self.extractTweets(result["statuses"], ticker)
@@ -90,7 +104,10 @@ class TwitterStock:
         # Filter any tweets with more than 1 stock symbol in them
         statuses1 = [s for s in statuses if len(s.symbols) <= 1]
 
-        return statuses1
+        # Remove any tweets older than 24 hours
+        statuses2 = [s for s in statuses1 if s.created_at > yesterday]
+
+        return statuses2
 
 
     # Helper functions
