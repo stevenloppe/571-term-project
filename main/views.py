@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.views import generic
@@ -28,14 +29,25 @@ def stockdetails(request, sa_stockTicker):
     if sa_stockTicker.endswith("/"):
         sa_stockTicker = sa_stockTicker[:-1]
 
-    try:
-        stock = get_object_or_404(StockAnalysis, stockTicker=sa_stockTicker)
-    except StockAnalysis.DoesNotExist:
+    twitterStock = TwitterStock();
+    tweets = twitterStock.getTweetsForStock(sa_stockTicker)
+
+    stockAnalysis = StockAnalysis()
+    stockAnalysis.stockTicker = sa_stockTicker
+    stockAnalysis.lastUpdated = datetime.now()
+    stockAnalysis.numTweets = len(tweets)
+    stockAnalysis.positiveSentiment = 0.6 # Temp
+    stockAnalysis.negativeSentiment = 0.8 # Temp
+
+
+    #try:
+    #    stock = get_object_or_404(StockAnalysis, stockTicker=sa_stockTicker)
+    #except StockAnalysis.DoesNotExist:
         #TODO: Run the method to calcuate sentiment and add it to the database
-        raise Http404("To be updated")
+    #    raise Http404("To be updated")
     #if (stock.is_outdated)
         #TODO: Run the method to calcuate sentiment and update the database
-    return render(request, 'stockdetails.html', { 'stock' : stock })
+    return render(request, 'stockdetails.html', { 'stock' : stockAnalysis })
 
 
 def twittertest(request):
