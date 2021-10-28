@@ -85,8 +85,10 @@ class TwitterStock:
         now = datetime.now()
         yesterday = now - timedelta(days=1)
 
-
-        oldest_tweet_datetime = min(statuses, key=lambda s: s.created_at).created_at
+        if len(statuses) > 0:
+            oldest_tweet_datetime = min(statuses, key=lambda s: s.created_at).created_at
+        else:
+            oldest_tweet_datetime = None
 
         ## as long as the last api request returned some results AND
         #  we haven't hit the hardcoded api request limit, keep getting results AND
