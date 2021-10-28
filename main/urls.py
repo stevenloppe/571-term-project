@@ -1,7 +1,11 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
+from django.views.generic.base import RedirectView
+
+favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 
 urlpatterns = [
+    re_path(r'^favicon\.ico$', favicon_view),
     path('', views.index, name='index'),
     path('twittertest', views.twittertest, name='twittertest'),
     path('<str:sa_stockTicker>', views.stockdetails, name='stockdetails'),
