@@ -14,3 +14,10 @@ password: ```d?!q4k\>6)D2j^{C```
 
 Emoji Sentiment Table from:
 http://kt.ijs.si/data/Emoji_sentiment_ranking/about.html
+
+
+
+Packages:
+
+`pip install regex`
+`pip install twitter`

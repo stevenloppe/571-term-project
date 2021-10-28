@@ -1,5 +1,7 @@
 from twitter import *
 from datetime import datetime, timedelta
+import emoji
+import regex
 
 class Tweet:
     def __init__(self, id, created_at, text, ticker, is_retweet, retweet_count, author, symbols):
@@ -30,6 +32,24 @@ class Tweet:
         self.fetched_at = datetime.now()
 
         self.author = author
+
+        self.emojis = self.get_emojis(self.text)
+        self.text_without_emojis = emoji.replace_emoji(text, "")
+
+
+
+    # Extract Emojis
+    # https://stackoverflow.com/a/49242754
+    def get_emojis(self, text):
+
+        emoji_list = []
+        data = regex.findall(r'\X', text)
+        for word in data:
+            if any(char in emoji.UNICODE_EMOJI['en'] for char in word):
+                emoji_list.append(word)
+        
+        return emoji_list
+
 
 class Author:
     def __init__(self, id, name, followers_count, created_at):
