@@ -19,5 +19,26 @@
         <p>positiveSentiment: {{stock.positiveSentiment}}</p>
         <p>negativeSentiment: {{stock.negativeSentiment}}</p>
         <p>Highlighted Tweets:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Created</th>
+                    <th>Text</th>
+                    <th>Emojis</th>
+                    <th>Text Without Emojis</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tweet in tweets %}
+                    <tr>
+                        <td>{{createtweet.d_at}}</td>
+                        <td>{{tweet.text}}</td>
+                        <td>{{tweet.emojis}}</td>
+                        <td>{{tweet.text_without_emojis}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>>
     </main>
 </body>

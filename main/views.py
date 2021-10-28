@@ -47,7 +47,7 @@ def stockdetails(request, sa_stockTicker):
     #    raise Http404("To be updated")
     #if (stock.is_outdated)
         #TODO: Run the method to calcuate sentiment and update the database
-    return render(request, 'stockdetails.html', { 'stock' : stockAnalysis })
+    return render(request, 'stockdetails.html', { 'stock' : stockAnalysis, 'tweets': tweets })
 
 
 def twittertest(request):
