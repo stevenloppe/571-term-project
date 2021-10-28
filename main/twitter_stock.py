@@ -93,7 +93,7 @@ class TwitterStock:
         ## as long as the last api request returned some results AND
         #  we haven't hit the hardcoded api request limit, keep getting results AND
         #  we haven't started retrieving tweets more than 24 hours old
-        while (len(result["statuses"]) > 0 and api_requests < 20 and oldest_tweet_datetime > yesterday):
+        while (len(result["statuses"]) > 0 and api_requests < 10 and oldest_tweet_datetime > yesterday):
             args["max_id"] = self.min_id(statuses) - 1
             result = self.twitter.search.tweets(**args)
             statuses += self.extractTweets(result["statuses"], ticker)
