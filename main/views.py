@@ -38,7 +38,7 @@ def stockdetails(request, sa_stockTicker):
     stockAnalysis.numTweets = len(tweets)
     stockAnalysis.positiveSentiment = 0.6 # Temp
     stockAnalysis.negativeSentiment = 0.8 # Temp
-
+    stockAnalysis.save();
 
     #try:
     #    stock = get_object_or_404(StockAnalysis, stockTicker=sa_stockTicker)
