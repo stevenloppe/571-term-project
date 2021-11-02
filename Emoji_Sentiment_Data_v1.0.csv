@@ -19,6 +19,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 😏,0x1f60f,1522,0.764977294,170,676,676,SMIRKING FACE,Emoticons
 😉,0x1f609,1521,0.844832651,151,513,857,WINKING FACE,Emoticons
 🙌,0x1f64c,1506,0.790600034,152,358,996,PERSON RAISING BOTH HANDS IN CELEBRATION,Emoticons
+🙌,0x1f64c,1506,0.790600034,152,358,996,RAISING HANDS,Emoticons
 🙈,0x1f648,1456,0.738880937,238,350,868,SEE-NO-EVIL MONKEY,Emoticons
 💪,0x1f4aa,1409,0.806704098,101,424,884,FLEXED BICEPS,Miscellaneous Symbols and Pictographs
 😄,0x1f604,1398,0.794972621,191,426,781,SMILING FACE WITH OPEN MOUTH AND SMILING EYES,Emoticons
@@ -70,7 +71,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 😚,0x1f61a,424,0.853414944,20,81,323,KISSING FACE WITH CLOSED EYES,Emoticons
 😻,0x1f63b,417,0.729665769,28,101,288,SMILING CAT FACE WITH HEART-SHAPED EYES,Emoticons
 ©,0xa9,416,0.740148376,54,259,103,COPYRIGHT SIGN,Latin-1 Supplement
-👀,0x1f440,410,0.759422009,93,198,119,EYES,Miscellaneous Symbols and Pictographs
+👀,0x1f440,410,0.759422009,93,198,219,EYES,Miscellaneous Symbols and Pictographs
 💘,0x1f498,395,0.785036942,18,87,290,HEART WITH ARROW,Miscellaneous Symbols and Pictographs
 🐓,0x1f413,384,0.490808466,41,291,52,ROOSTER,Miscellaneous Symbols and Pictographs
 ☕,0x2615,382,0.685215074,53,182,147,HOT BEVERAGE,Miscellaneous Symbols
@@ -123,7 +124,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 😛,0x1f61b,220,0.734419263,18,50,152,FACE WITH STUCK-OUT TONGUE,Emoticons
 😬,0x1f62c,214,0.793679841,57,58,99,GRIMACING FACE,Emoticons
 👯,0x1f46f,211,0.742043843,24,69,118,WOMAN WITH BUNNY EARS,Miscellaneous Symbols and Pictographs
-💎,0x1f48e,209,0.694054736,11,68,130,GEM STONE,Miscellaneous Symbols and Pictographs
+💎,0x1f48e,209,0.694054736,11,68,230,GEM STONE,Miscellaneous Symbols and Pictographs
 🌿,0x1f33f,208,0.600120585,1,125,82,HERB,Miscellaneous Symbols and Pictographs
 🎂,0x1f382,201,0.747999917,16,44,141,BIRTHDAY CAKE,Miscellaneous Symbols and Pictographs
 🌟,0x1f31f,199,0.654510913,11,111,77,GLOWING STAR,Miscellaneous Symbols and Pictographs
@@ -275,7 +276,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 ═,0x2550,62,0.441188106,0,61,1,BOX DRAWINGS DOUBLE HORIZONTAL,Box Drawing
 ♦,0x2666,61,0.562227083,6,20,35,BLACK DIAMOND SUIT,Miscellaneous Symbols
 💭,0x1f4ad,60,0.687954711,10,27,23,THOUGHT BALLOON,Miscellaneous Symbols and Pictographs
-🌙,0x1f319,58,0.669389528,3,16,39,CRESCENT MOON,Miscellaneous Symbols and Pictographs
+🌙,0x1f319,58,0.669389528,3,16,139,CRESCENT MOON,Miscellaneous Symbols and Pictographs
 🐟,0x1f41f,58,0.676573608,2,12,44,FISH,Miscellaneous Symbols and Pictographs
 👣,0x1f463,58,0.638779151,6,25,27,FOOTPRINTS,Miscellaneous Symbols and Pictographs
 ☞,0x261e,58,0.725402078,0,51,7,WHITE RIGHT POINTING INDEX,Miscellaneous Symbols
@@ -307,7 +308,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 🔊,0x1f50a,49,0.651738713,4,20,25,SPEAKER WITH THREE SOUND WAVES,Miscellaneous Symbols and Pictographs
 🌌,0x1f30c,47,0.750586217,5,11,31,MILKY WAY,Miscellaneous Symbols and Pictographs
 🍎,0x1f34e,47,0.75089759,6,19,22,RED APPLE,Miscellaneous Symbols and Pictographs
-🐻,0x1f43b,47,0.691609267,6,13,28,BEAR FACE,Miscellaneous Symbols and Pictographs
+🐻,0x1f43b,47,0.691609267,106,13,28,BEAR FACE,Miscellaneous Symbols and Pictographs
 ─,0x2500,47,0.711348374,0,40,7,BOX DRAWINGS LIGHT HORIZONTAL,Box Drawing
 ╰,0x2570,47,0.509745612,7,36,4,BOX DRAWINGS LIGHT ARC UP AND RIGHT,Box Drawing
 💇,0x1f487,46,0.678429189,7,16,23,HAIRCUT,Miscellaneous Symbols and Pictographs
@@ -333,7 +334,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 🍬,0x1f36c,41,0.784072191,8,9,24,CANDY,Miscellaneous Symbols and Pictographs
 😺,0x1f63a,40,0.825897808,8,7,25,SMILING CAT FACE WITH OPEN MOUTH,Emoticons
 🐴,0x1f434,40,0.795776393,8,21,11,HORSE FACE,Miscellaneous Symbols and Pictographs
-🚀,0x1f680,40,0.698479931,2,15,23,ROCKET,Transport and Map Symbols
+🚀,0x1f680,40,0.698479931,2,15,123,ROCKET,Transport and Map Symbols
 ¦,0xa6,40,0.402048475,7,1,32,BROKEN BAR,Latin-1 Supplement
 💢,0x1f4a2,40,0.560644274,6,18,16,ANGER SYMBOL,Miscellaneous Symbols and Pictographs
 🎬,0x1f3ac,40,0.650028961,2,24,14,CLAPPER BOARD,Miscellaneous Symbols and Pictographs
@@ -371,7 +372,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 🍳,0x1f373,33,0.798473001,13,6,14,COOKING,Miscellaneous Symbols and Pictographs
 🔵,0x1f535,33,0.680543536,4,14,15,LARGE BLUE CIRCLE,Miscellaneous Symbols and Pictographs
 😾,0x1f63e,33,0.914644696,20,5,8,POUTING CAT FACE,Emoticons
-🌕,0x1f315,33,0.641921506,3,7,23,FULL MOON SYMBOL,Miscellaneous Symbols and Pictographs
+🌕,0x1f315,33,0.641921506,3,7,123,FULL MOON SYMBOL,Miscellaneous Symbols and Pictographs
 🐨,0x1f428,33,0.696298274,4,9,20,KOALA,Miscellaneous Symbols and Pictographs
 🔐,0x1f510,33,0.845213961,6,9,18,CLOSED LOCK WITH KEY,Miscellaneous Symbols and Pictographs
 💿,0x1f4bf,33,0.444466092,0,11,22,OPTICAL DISC,Miscellaneous Symbols and Pictographs
@@ -584,7 +585,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 👚,0x1f45a,11,0.810043786,0,3,8,WOMANS CLOTHES,Miscellaneous Symbols and Pictographs
 🚍,0x1f68d,11,0.659558885,4,2,5,ONCOMING BUS,Transport and Map Symbols
 □,0x25a1,11,0.673637431,7,0,4,WHITE SQUARE,Geometric Shapes
-🐂,0x1f402,11,0.774388184,1,7,3,OX,Miscellaneous Symbols and Pictographs
+🐂,0x1f402,11,0.774388184,1,7,103,OX,Miscellaneous Symbols and Pictographs
 🚣,0x1f6a3,11,0.712555862,0,3,8,ROWBOAT,Transport and Map Symbols
 ✳,0x2733,11,0.37234627,0,11,0,EIGHT SPOKED ASTERISK,Dingbats
 🏉,0x1f3c9,11,0.837042609,0,4,7,RUGBY FOOTBALL,Miscellaneous Symbols and Pictographs
@@ -757,7 +758,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 △,0x25b3,4,0.595601141,0,3,1,WHITE UP-POINTING TRIANGLE,Geometric Shapes
 📆,0x1f4c6,4,0.839991723,0,0,4,TEAR-OFF CALENDAR,Miscellaneous Symbols and Pictographs
 ❛,0x275b,4,0.735294118,0,2,2,HEAVY SINGLE TURNED COMMA QUOTATION MARK ORNAMENT,Dingbats
-📉,0x1f4c9,4,0.726505602,0,2,2,CHART WITH DOWNWARDS TREND,Miscellaneous Symbols and Pictographs
+📉,0x1f4c9,4,0.726505602,100,2,2,CHART WITH DOWNWARDS TREND,Miscellaneous Symbols and Pictographs
 ▵,0x25b5,4,0.012558719,0,2,2,WHITE UP-POINTING SMALL TRIANGLE,Geometric Shapes
 🔎,0x1f50e,4,0.333026114,0,1,3,RIGHT-POINTING MAGNIFYING GLASS,Miscellaneous Symbols and Pictographs
 ☜,0x261c,4,0.95068438,0,3,1,WHITE LEFT POINTING INDEX,Miscellaneous Symbols
@@ -870,7 +871,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 🎑,0x1f391,2,0.309294872,0,2,0,MOON VIEWING CEREMONY,Miscellaneous Symbols and Pictographs
 🔬,0x1f52c,2,0.727696078,0,0,2,MICROSCOPE,Miscellaneous Symbols and Pictographs
 ➗,0x2797,2,0.018722944,1,1,0,HEAVY DIVISION SIGN,Dingbats
-📈,0x1f4c8,2,0.568724559,0,1,1,CHART WITH UPWARDS TREND,Miscellaneous Symbols and Pictographs
+📈,0x1f4c8,2,0.568724559,0,1,101,CHART WITH UPWARDS TREND,Miscellaneous Symbols and Pictographs
 ⌘,0x2318,2,0.613333333,0,2,0,PLACE OF INTEREST SIGN,Miscellaneous Technical
 ⏪,0x23ea,2,0.489035088,0,1,1,BLACK LEFT-POINTING DOUBLE TRIANGLE,Miscellaneous Technical
 ╹,0x2579,2,0.952380952,0,2,0,BOX DRAWINGS HEAVY UP,Box Drawing
@@ -925,7 +926,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 📜,0x1f4dc,1,1,0,0,1,SCROLL,Miscellaneous Symbols and Pictographs
 ♏,0x264f,1,0.772058824,0,1,0,SCORPIUS,Miscellaneous Symbols
 🚝,0x1f69d,1,0.966666667,0,0,1,MONORAIL,Transport and Map Symbols
-☢,0x2622,1,0.725,0,1,0,RADIOACTIVE SIGN,Miscellaneous Symbols
+☢,0x2622,1,0.725,2,1,0,RADIOACTIVE SIGN,Miscellaneous Symbols
 🎏,0x1f38f,1,0.390243902,0,1,0,CARP STREAMER,Miscellaneous Symbols and Pictographs
 ┘,0x2518,1,0.909090909,1,0,0,BOX DRAWINGS LIGHT UP AND LEFT,Box Drawing
 ✝,0x271d,1,0.411764706,1,0,0,LATIN CROSS,Dingbats
@@ -968,3 +969,5 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 ❋,0x274b,1,0.888888889,0,1,0,HEAVY EIGHT TEARDROP-SPOKED PROPELLER ASTERISK,Dingbats
 ✆,0x2706,1,0.557251908,0,1,0,TELEPHONE LOCATION SIGN,Dingbats
 📔,0x1f4d4,1,0.814814815,0,0,1,NOTEBOOK WITH DECORATIVE COVER,Miscellaneous Symbols and Pictographs
+🟢,-,-,-,0,1,1,GREEN CIRCLE,-
+🔴,-,-,-,1,1,0,RED CIRCLE,-

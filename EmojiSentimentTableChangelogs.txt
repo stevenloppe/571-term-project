@@ -1,0 +1,41 @@
+The numbers use this format: Negative,Neutral,Positive
+
+The following modifications have been made:
+------------------------------------------------------------
+
+Chart with downwards trend
+0,2,2 --> 100,2,2
+
+Chart with upwards trend
+0,1,1 --> 0,1,101
+
+Gem stone
+11,68,130 --> 11,68,230
+
+Rocket
+2,15,23 --> 2,15,123
+
+Eyes
+93,198,119 --> 93,198,219
+
+Radioactive sign 
+0,1,0 --> 5,1,0
+
+Crescent moon
+3,16,39 --> 3,16,139
+
+Full moon symbol
+3,7,23 --> 3,7,123
+
+Ox
+1,7,3 --> 1,7,103
+
+Bear face
+6,13,28 --> 106,13,28
+
+
+
+Added Rows:
+🟢,-,-,-,0,1,1,GREEN CIRCLE,-
+🔴,-,-,-,1,1,0,RED CIRCLE,-
+🙌,0x1f64c,1506,0.790600034,152,358,996,RAISING HANDS,Emoticons    (the table used the old name)
