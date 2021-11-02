@@ -8,52 +8,66 @@ list1 = list()
 bigrams = list()
 numbigrams = list()
 pos = list()
+neg = list()
+negation = ["never","no","nothing","nowhere","noone","none","not","havent","hasnt","hadnt","cant","couldnt","shouldnt","wont","wouldnt","dont","doesnt","didnt","isnt","arent","aint","n't"]
+punctuation = ["^","[","]",".",":",";","?","$","!"]
 
 #running the stanza pipeline on input
-en_doc = en_nlp("I love that tsla stock it is just good!")
+en_doc = en_nlp("I never owned tesla stock its much to large cap! But i still hate it.")
 
 #initializing global variable sentiment
 sentiment = float()
 
-#create a list of all words and POS 
-print((en_doc))
+#create a list of all words and POS
+#print((en_doc))
 for sentence in en_doc.sentences:
     for word in sentence.words:
         list1.append(word.text)
         if (word.pos == "PRON"):
             pos.append("PR")
-        if (word.pos == "ADJ"):
+        elif (word.pos == "ADJ"):
             pos.append("JJ")
-        if (word.pos == "ADP"):
+        elif (word.pos == "ADP"):
             pos.append("IN")
-        if (word.pos == "ADV"):
+        elif (word.pos == "ADV"):
             pos.append("RB")
-        if (word.pos == "AUX"):
+        elif (word.pos == "AUX"):
             pos.append("MD")
-        if (word.pos == "CCONJ"):
+        elif (word.pos == "CCONJ"):
             pos.append("CC")
-        if (word.pos == "DET"):
+        elif (word.pos == "DET"):
             pos.append("DT")
-        if (word.pos == "INTJ"):
+        elif (word.pos == "INTJ"):
             pos.append("UH")
-        if (word.pos == "NOUN"):
+        elif (word.pos == "NOUN"):
             pos.append("NN")
-        if (word.pos == "NUM"):
+        elif (word.pos == "NUM"):
             pos.append("CD")
-        if (word.pos == "Part"):
+        elif (word.pos == "Part"):
             pos.append("RP")
-        if (word.pos == "PROPN"):
+        elif (word.pos == "PROPN"):
             pos.append("NN")
-        if (word.pos == "SCONJ"):
+        elif (word.pos == "SCONJ"):
             pos.append("IN")
-        if (word.pos == "SYM"):
+        elif (word.pos == "SYM"):
             pos.append("SY")
-        if (word.pos == "VERB"):
+        elif (word.pos == "VERB"):
             pos.append("VB")
-        if (word.pos == "PUNCT"):
+        elif (word.pos == "PUNCT"):
             pos.append("")
-        if (word.pos == "X"):
+        elif (word.pos == "X"):
             pos.append("")
+
+for i in range(0,len(list1)):
+    if list1[i] not in negation:
+        neg.append("nn")
+    elif list1[i] in negation:
+        neg.append("nstart")
+
+for i in range(0,len(neg)-1):
+    if (neg[i]== "nstart") | (neg[i]== "ne") & (list1[i+1] not in punctuation):
+        neg[i+1] = "ne"
+
 
 #creating a list of all bigrams (not all will be used)
 for i in range(0,len(list1)-1):
@@ -69,18 +83,32 @@ for i in range(0,len(list1)-1):
         if (x == 1) & (y==len(bigrams[i])+1):
             split_line=line.split(",")
             #print(split_line[2])
-            sentiment = sentiment + float(split_line[2])
+            if (neg[i] == "nn") | (neg[i] == "nstart"):
+                sentiment = sentiment + float(split_line[2])
+            elif neg[i] == "ne":
+                sentiment = sentiment + float(split_line[3])
             #print(split_line)
             #print(i)
             numbigrams.append(i)
     searchfile.close()
 
+#print(list1)
+#print(numbigrams)
 #removing bigrams from unigrams
 numbigrams.sort(reverse = True)
+
 for g in range(0,(len(numbigrams))):
-    print(numbigrams[g])
-    list1.pop(numbigrams[g])
-    list1.pop(numbigrams[g])
+    if (numbigrams[g] == 0):
+        list1.pop(numbigrams[g])
+        list1.pop(numbigrams[g])
+    elif (numbigrams[g] == (numbigrams[g+1])+1):
+        list1.pop(numbigrams[g])
+    else:
+        #print(numbigrams[g])
+        list1.pop(numbigrams[g])
+        list1.pop(numbigrams[g])
+        neg.pop(numbigrams[g])
+        neg.pop(numbigrams[g])
 
 #running sentiment on unigrams
 for i in range(0,len(list1)):
@@ -91,11 +119,15 @@ for i in range(0,len(list1)):
         split_line=line.split(",")
         z=split_line[1]
         if (x == 1) & (y==len(list1[i])+1) & (z==pos[i]):
-            sentiment = sentiment + float(split_line[2])
+            if (neg[i] == "nn") | (neg[i] == "nstart"):
+                sentiment = sentiment + float(split_line[2])
+            elif neg[i] == "ne":
+                sentiment = sentiment + float(split_line[3])
     searchfile.close()
 
-print(list1)
-print(sentiment)
-print(pos)
 
+#print(list1)
+print(sentiment)
+#print(pos)
+#print(neg)
 
