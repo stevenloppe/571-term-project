@@ -26,7 +26,8 @@
                     <th>Created</th>
                     <th>Text</th>
                     <th>Emojis</th>
-                    <th>Text Without Emojis</th>
+                    <th>+ Emoji Sentiment</th>
+                    <th>- Emoji Sentiment</th>
                 </tr>
             </thead>
             <tbody>
@@ -35,7 +36,8 @@
                         <td>{{createtweet.d_at}}</td>
                         <td>{{tweet.text}}</td>
                         <td>{{tweet.emojis}}</td>
-                        <td>{{tweet.text_without_emojis}}</td>
+                        <td>{{tweet.emoji_sentiment}}</td>
+                        <td>{{tweet.emoji_sentiment}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
