@@ -36,8 +36,17 @@ def stockdetails(request, sa_stockTicker):
     stockAnalysis.stockTicker = sa_stockTicker
     stockAnalysis.lastUpdated = datetime.now()
     stockAnalysis.numTweets = len(tweets)
-    stockAnalysis.positiveSentiment = 0.6 # Temp
-    stockAnalysis.negativeSentiment = 0.8 # Temp
+    
+    emojiPositiveSentimentSum = 0
+    for t in tweets:
+        emojiPositiveSentimentSum += t.emoji_sentiment
+
+    stockAnalysis.positiveSentiment = emojiPositiveSentimentSum / len(tweets)
+    
+    # TODO: Need to determine both positive and negative sentiment for emojis
+    stockAnalysis.negativeSentiment = emojiPositiveSentimentSum / len(tweets)
+    
+    
     stockAnalysis.save();
 
     #try:

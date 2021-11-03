@@ -3,6 +3,8 @@ from datetime import datetime, timedelta
 import emoji
 import regex
 
+from main.EmojiTranslation import EmojiTranslation
+
 class Tweet:
     def __init__(self, id, created_at, text, ticker, is_retweet, retweet_count, author, symbols):
         self.id = id
@@ -36,6 +38,12 @@ class Tweet:
         self.emojis = self.get_emojis(self.text)
         self.text_without_emojis = emoji.replace_emoji(text, "")
 
+        # TODO: Don't we need to calculate both positive and negative sentiment?
+        #       This only returns a single number
+        # TODO: Does this function behave appropriately if there are no emojis? 
+        #       If it has no emojis should we be ignoring any score in the final calculation?
+        self.emoji_sentiment = EmojiTranslation(self.emojis)
+
 
 
     # Extract Emojis
@@ -49,7 +57,6 @@ class Tweet:
                 emoji_list.append(word)
         
         return emoji_list
-
 
 class Author:
     def __init__(self, id, name, followers_count, created_at):
