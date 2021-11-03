@@ -9,8 +9,9 @@ def EmojiTranslation(inputList):
         csvreader = csv.reader(csvfile)
         for row in csvreader:
             name = row[7]
+            emoji = row[0]
             for item in inputList:
-                if (name == item.upper()):
+                if item.find(emoji) != -1:
                     negative = int(row[4])
                     neutral = int(row[5])
                     positive = int(row[6])
