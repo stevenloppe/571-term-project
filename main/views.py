@@ -32,7 +32,11 @@ def stockdetails(request, sa_stockTicker):
     twitterStock = TwitterStock();
     tweets = twitterStock.getTweetsForStock(sa_stockTicker)
 
-    stockAnalysis = StockAnalysis()
+    try:
+        stockAnalysis = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
+    except:
+        stockAnalysis = StockAnalysis()
+
     stockAnalysis.stockTicker = sa_stockTicker
     stockAnalysis.lastUpdated = datetime.now()
     stockAnalysis.numTweets = len(tweets)
@@ -46,8 +50,9 @@ def stockdetails(request, sa_stockTicker):
     # TODO: Need to determine both positive and negative sentiment for emojis
     stockAnalysis.negativeSentiment = emojiPositiveSentimentSum / len(tweets)
     
+    print("Sentiment: ",emojiPositiveSentimentSum / len(tweets))
     
-    stockAnalysis.save();
+    stockAnalysis.save()
 
     #try:
     #    stock = get_object_or_404(StockAnalysis, stockTicker=sa_stockTicker)
