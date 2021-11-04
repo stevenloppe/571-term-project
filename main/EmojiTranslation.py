@@ -1,7 +1,11 @@
 import csv
 
 def EmojiTranslation(inputList):
-    #inputList = ["Eyes", "Rocket", "Gem stone", "Raising hands"]
+
+    #inputList = ['🤷\u200d♂️', '✊', '✊🏻', '✊🏿']
+    for i in range(len(inputList)):
+        inputList[i] = inputList[i][:1]
+
     sentiments = []
     output = 0.5
 
@@ -21,5 +25,8 @@ def EmojiTranslation(inputList):
 
     if (len(sentiments) > 0):
         output = sum(sentiments) / len(sentiments)
+
+    # Positive sentiment = output
+    # Negative sentiment = 1 - output
 
     return output

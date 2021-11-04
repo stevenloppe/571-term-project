@@ -39,3 +39,4 @@ Added Rows:
 🟢,-,-,-,0,1,1,GREEN CIRCLE,-
 🔴,-,-,-,1,1,0,RED CIRCLE,-
 🙌,0x1f64c,1506,0.790600034,152,358,996,RAISING HANDS,Emoticons    (the table used the old name)
+🤷,-,-,-,1,1,1,PERSON SHRUGGING,-
