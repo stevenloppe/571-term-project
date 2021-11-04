@@ -29,7 +29,7 @@ def stockdetails(request, sa_stockTicker):
     if sa_stockTicker.endswith("/"):
         sa_stockTicker = sa_stockTicker[:-1]
 
-    twitterStock = TwitterStock();
+    twitterStock = TwitterStock()
     tweets = twitterStock.getTweetsForStock(sa_stockTicker)
 
     try:
@@ -38,21 +38,27 @@ def stockdetails(request, sa_stockTicker):
         stockAnalysis = StockAnalysis()
 
     stockAnalysis.stockTicker = sa_stockTicker
-    stockAnalysis.lastUpdated = datetime.now()
+    stockAnalysis.lastUpdated = datetime.utcnow()
     stockAnalysis.numTweets = len(tweets)
     
     emojiPositiveSentimentSum = 0
     for t in tweets:
         emojiPositiveSentimentSum += t.emoji_sentiment
 
-    stockAnalysis.positiveSentiment = emojiPositiveSentimentSum / len(tweets)
-    
+    # positiveSentiment and negativeSentiment are integers, not floats so for now multiplying them by 100 so it isn't saved as 0
+    stockAnalysis.positiveSentiment = (emojiPositiveSentimentSum / len(tweets) ) * 100
+
     # TODO: Need to determine both positive and negative sentiment for emojis
-    stockAnalysis.negativeSentiment = emojiPositiveSentimentSum / len(tweets)
-    
-    print("Sentiment: ",emojiPositiveSentimentSum / len(tweets))
-    
+    stockAnalysis.negativeSentiment = (emojiPositiveSentimentSum / len(tweets) ) * 100
+
+    print("Before PSentiment: ",stockAnalysis.positiveSentiment)
+    print("Before NSentiment: ",stockAnalysis.negativeSentiment)
+
     stockAnalysis.save()
+
+    stockAnalysis2 = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
+    print("After PSentiment: ",stockAnalysis2.positiveSentiment)
+    print("After NSentiment: ",stockAnalysis2.negativeSentiment)
 
     #try:
     #    stock = get_object_or_404(StockAnalysis, stockTicker=sa_stockTicker)

@@ -21,3 +21,13 @@ Packages:
 
 `pip install regex`
 `pip install twitter`
+
+
+
+OPTIONAL TODO:
+ - Only update stock sentiment information if the information if out of date
+ - Add a loading circle or something while waiting for sentiment calculation
+ - Finish frontend
+     - Add a table for 'most recently searched for sentiments' to home page
+     - Add an About section to the home page
+     - everything in stockdetails.html
