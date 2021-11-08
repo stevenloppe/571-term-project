@@ -20,6 +20,8 @@ class StockAnalysis(models.Model):
 
 class Author(models.Model):
     id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=1024, default="")
+    followers_count = models.IntegerField(default=0)
 
 
 class Tweet(models.Model):
