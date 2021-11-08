@@ -16,3 +16,24 @@ class StockAnalysis(models.Model):
 
     def is_outdated(self):
         return self.lastUpdated <= timezone.now() - datetime.timedelta(hours=1)
+
+
+class Author(models.Model):
+    id = models.IntegerField(primary_key=True)
+
+
+class Tweet(models.Model):
+    id = models.IntegerField(primary_key=True)
+    text = models.CharField(max_length=1024) # Greater than we should need
+    created_at = models.DateTimeField()
+    ticker = models.CharField(max_length=255)
+    is_retweet = models.BooleanField()
+    retweet_count = models.IntegerField()
+    fetched_at = models.DateTimeField()
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    
+
+
+class TweetSymbols(models.Model):
+    tweet = models.ForeignKey(Tweet, related_name="symbols", on_delete=models.CASCADE)
+    symbol = models.CharField(max_length=255)

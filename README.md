@@ -23,6 +23,13 @@ Packages:
 `pip install twitter`
 
 
+# Setting up database for storing tweets from twitter
+
+1. Create initial models
+2. Run `python manage.py makemigrations main`
+3. Run `python manage.py sqlmigrate main 0001`
+4. Run `python manage.py migrate`
+
 
 OPTIONAL TODO:
  - Only update stock sentiment information if the information if out of date
