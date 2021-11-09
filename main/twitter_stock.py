@@ -135,10 +135,9 @@ class TwitterStock:
         if(tweet_with_highest_id is not None):
             args["since_id"] = tweet_with_highest_id.id
 
-        try:
-            result = self.twitter.search.tweets(**args)
-        except TwitterHTTPError:
-            return []
+        
+        result = self.twitter.search.tweets(**args)
+        
 
 
         statuses = [] + self.extractTweets(result["statuses"], ticker)
@@ -161,11 +160,9 @@ class TwitterStock:
         #  we haven't hit the hardcoded api request limit, keep getting results 
         while (len(result["statuses"]) > 0 and api_requests < 50):
             args["max_id"] = self.min_id(statuses) - 1
-            try:
-                result = self.twitter.search.tweets(**args)
-            except TwitterHTTPError:
-                # I guess return what we have so far? 
-                return statuses
+            
+            result = self.twitter.search.tweets(**args)
+            
             statuses += self.extractTweets(result["statuses"], ticker)
             api_requests += 1
         

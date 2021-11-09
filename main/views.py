@@ -76,7 +76,12 @@ def stockdetails(request, sa_stockTicker):
 
 def updateHistoricalDatabase(request):
     twitter_stock = TwitterStock()
-    twitter_stock.updateHistoricalDatabase()
+    try:
+        twitter_stock.updateHistoricalDatabase()    
+    except TwitterHTTPError:
+        # I guess return what we have so far? 
+        return HttpResponse("API Rate Limit")
+    
     
     return HttpResponse("Finished")
 
