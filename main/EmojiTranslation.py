@@ -1,6 +1,6 @@
 import csv
 
-def EmojiTranslation(inputList):
+def emojiSentiment(inputList):
 
     #inputList = ['🤷\u200d♂️', '✊', '✊🏻', '✊🏿']
     for i in range(len(inputList)):

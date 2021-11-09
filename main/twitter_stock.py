@@ -4,7 +4,8 @@ import emoji
 import regex
 import pytz
 
-from main.EmojiTranslation import EmojiTranslation
+from main.EmojiTranslation import emojiSentiment
+from main.TextSentiment import textSentiment
 
 from django.db.models import Max
 
@@ -48,12 +49,17 @@ class Tweet:
 
         self.emojis = self.get_emojis(self.text)
         self.text_without_emojis = emoji.replace_emoji(text, "")
+        self.emojis_len = len(self.emojis)
+        self.text_len = len(self.text_without_emojis)
 
         # TODO: Don't we need to calculate both positive and negative sentiment?
         #       This only returns a single number
         # TODO: Does this function behave appropriately if there are no emojis? 
         #       If it has no emojis should we be ignoring any score in the final calculation?
-        self.emoji_sentiment = EmojiTranslation(self.emojis)
+        self.emoji_sentiment = emojiSentiment(self.emojis)
+        # Temp set to 0
+        #self.text_sentiment = textSentiment(self.text_without_emojis)
+        self.text_sentiment = 0
 
 
 

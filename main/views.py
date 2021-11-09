@@ -47,7 +47,9 @@ def stockdetails(request, sa_stockTicker):
     
     emojiPositiveSentimentSum = 0
     for t in tweets:
-        emojiPositiveSentimentSum += t.emoji_sentiment
+        textWeight = t.text_len / (t.text_len + t.emojis_len)
+        emojiWeight = t.emojis_len / (t.text_len + t.emojis_len)
+        emojiPositiveSentimentSum += (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
 
     # positiveSentiment and negativeSentiment are integers, not floats so for now multiplying them by 100 so it isn't saved as 0
     stockAnalysis.positiveSentiment = (emojiPositiveSentimentSum / len(tweets) ) * 100
