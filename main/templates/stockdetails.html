@@ -33,7 +33,7 @@
             <tbody>
                 {% for tweet in tweets %}
                     <tr>
-                        <td>{{createtweet.d_at}}</td>
+                        <td>{{tweet.created_at}}</td>
                         <td>{{tweet.text}}</td>
                         <td>{{tweet.emojis}}</td>
                         <td>{{tweet.emoji_sentiment}}</td>
@@ -41,6 +41,6 @@
                     </tr>
                 {% endfor %}
             </tbody>
-        </table>>
+        </table>
     </main>
 </body>
