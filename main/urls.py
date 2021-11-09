@@ -7,7 +7,7 @@ favicon_view = RedirectView.as_view(url='/static/favicon.ico', permanent=True)
 urlpatterns = [
     re_path(r'^favicon\.ico$', favicon_view),
     path('', views.index, name='index'),
-    path('twittertest', views.twittertest, name='twittertest'),
+    path('updateHistoricalDatabase', views.updateHistoricalDatabase, name='updateHistoricalDatabase'),
     path('<str:sa_stockTicker>', views.stockdetails, name='stockdetails'),
     path('<str:sa_stockTicker>/', views.stockdetails, name='stockdetails'),
 ]

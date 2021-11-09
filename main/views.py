@@ -5,10 +5,12 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
-from .models import StockAnalysis
+from .models import StockAnalysis, Tweet
 
 from twitter import *
 from main.twitter_stock import TwitterStock
+from main.twitter_stock import Tweet as TwitterTweet
+from main.twitter_stock import Author as TwitterAuthor
 
 TEMPLATE_DIRS = (
     'os.path.join(BASE_DIR, "templates"),'
@@ -25,12 +27,14 @@ def index(request):
     return render(request,"index.html")
 
 
+
 def stockdetails(request, sa_stockTicker):
     if sa_stockTicker.endswith("/"):
         sa_stockTicker = sa_stockTicker[:-1]
 
     twitterStock = TwitterStock()
     tweets = twitterStock.getTweetsForStock(sa_stockTicker)
+    tweets = analyseTweets(tweets)
 
     try:
         stockAnalysis = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
@@ -70,39 +74,29 @@ def stockdetails(request, sa_stockTicker):
     return render(request, 'stockdetails.html', { 'stock' : stockAnalysis, 'tweets': tweets })
 
 
-def twittertest(request):
-    # use ticker symbol in "tick" url param or default to APPL
-    ticker = request.GET["ticker"] if "ticker" in request.GET else "APPL"
+def updateHistoricalDatabase(request):
+    twitter_stock = TwitterStock()
+    twitter_stock.updateHistoricalDatabase()
+    
+    return HttpResponse("Finished")
 
-    twitterStock = TwitterStock()
-    statuses = twitterStock.getTweetsForStock(ticker)
 
 
-    responseText = """<table border=1>
-    <thead>
-        <tr>
-            <th>#</th>
-            <!--<th>Id</th>-->
-            <th>Created</th>
-            <!--<th>Is Retweet</th>-->
-            <th>Tweet</th>
-        </tr>
-    </thead>
-    <tbody>"""
 
-    status_count = 0
-    for status in statuses:
-        status_count += 1
-        s = """
-            <tr>
-                <td>{status_count}</td>
-                <!--<td>{id}</td>-->
-                <td>{created_at}</td>
-                <!--<td>{is_retweet}</td>-->
-                <td>{text}</td>
-            </tr>
-        """
-        responseText += s.format(status_count=status_count, id=status.id, created_at=status.created_at, text=status.text, is_retweet=status.is_retweet)
 
-    responseText += "</tbody></table>"
-    return HttpResponse(responseText)
+
+
+def analyseTweets(tweets):
+    #TODO: At the moment the tweet analysis happens in the twitter_stock.Tweet constructor
+    #       So just returning a list of those objects will "analyse" the tweets.
+    #       This is not a very good way of doing this.
+    results = []
+
+    for t in tweets:
+        #id, created_at, text, ticker, is_retweet, retweet_count, author, symbols
+        s = t.symbols.all()
+        author = TwitterAuthor(t.author.id, t.author.name, t.author.followers_count)
+        tt = TwitterTweet(t.id, t.created_at, t.text, t.ticker, t.is_retweet, t.retweet_count, author, t.symbols.all())
+        results.append(tt)
+
+    return results

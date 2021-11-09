@@ -1,17 +1,28 @@
 from twitter import *
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import emoji
 import regex
+import pytz
 
 from main.EmojiTranslation import EmojiTranslation
+
+from django.db.models import Max
+
+from main.models import Tweet as TweetModel
+from main.models import Author as AuthorModel
+from main.models import TweetSymbols as TweetSymbolsModel
 
 class Tweet:
     def __init__(self, id, created_at, text, ticker, is_retweet, retweet_count, author, symbols):
         self.id = id
 
-        # https://stackoverflow.com/a/7711869
-        self.created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
-        
+        if(type(created_at) is datetime):
+            self.created_at = created_at
+        else:
+            # https://stackoverflow.com/a/7711869
+            created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
+            self.created_at = datetime(year=created_at.year, month=created_at.month, day=created_at.day, hour=created_at.hour, minute=created_at.minute, second=created_at.second, microsecond=created_at.microsecond, tzinfo=timezone.utc)
+
         self.text = text
         self.ticker = ticker
         self.is_retweet = is_retweet
@@ -31,7 +42,7 @@ class Tweet:
         self.symbols = symbols
 
         # We might want to know when the info about a tweet was gathered because that will affect the retweet and follower counts
-        self.fetched_at = datetime.now()
+        self.fetched_at = datetime.now(timezone.utc)
 
         self.author = author
 
@@ -59,13 +70,13 @@ class Tweet:
         return emoji_list
 
 class Author:
-    def __init__(self, id, name, followers_count, created_at):
+    def __init__(self, id, name, followers_count):
         self.id  = id
         self.name = name
         self.followers_count = followers_count
 
         # https://stackoverflow.com/a/7711869
-        self.created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
+        #self.created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
         
 
 
@@ -82,9 +93,23 @@ class TwitterStock:
         self.twitter = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
 
 
-    def getTweetsForStock(self, ticker, filter_retweets=True, filter_links=True):
-        # TODO: Update Readme to include all install instructions necessary to get twitter working
-        
+    # - Should have a function to get relevant tweets directly from the api
+    #   - Do I want to ignore tweets that we already have? This would mean getting the last date for a given ticker and not getting tweets from before that
+    #   - This would mean we NEVER update a tweet's info. So all analysis would be against the same dataset.
+    # - Should THEN have a function that inserts a list of tweets in the database
+    #       - If we haven't already stored this tweet, insert it
+    #      
+    # 
+    # 
+    # 
+    #
+
+
+    def fetchTweetsFromApi(self, ticker, filter_retweets=True, filter_links=True):
+        # Fetches as many tweets from the Twitter api that are not already stored 
+        # in the database as we can
+
+
         # Remove retweets
         retweets = "-filter:retweets" if filter_retweets else ""
         
@@ -103,14 +128,29 @@ class TwitterStock:
             "tweet_mode"  : "extended" 
         }
 
-        result = self.twitter.search.tweets(**args)
+        # highest id stored in the database for the specified ticker
+        tweet_with_highest_id = TweetModel.objects.filter(ticker = ticker).order_by('-id').first()
+        
+        # We don't want tweets that are older than this since we already have them
+        if(tweet_with_highest_id is not None):
+            args["since_id"] = tweet_with_highest_id.id
+
+        try:
+            result = self.twitter.search.tweets(**args)
+        except TwitterHTTPError:
+            return []
+
+
         statuses = [] + self.extractTweets(result["statuses"], ticker)
         api_requests = 1
 
 
-        # Don't fetch tweets older than this
-        now = datetime.now()
-        yesterday = now - timedelta(days=1)
+        print("API Rate Limit Remaining: " + str(result.rate_limit_remaining))
+
+        if result.rate_limit_remaining <= 0:
+            # Stop if we've hit our api limit
+            return statuses
+
 
         if len(statuses) > 0:
             oldest_tweet_datetime = min(statuses, key=lambda s: s.created_at).created_at
@@ -118,25 +158,88 @@ class TwitterStock:
             oldest_tweet_datetime = None
 
         ## as long as the last api request returned some results AND
-        #  we haven't hit the hardcoded api request limit, keep getting results AND
-        #  we haven't started retrieving tweets more than 24 hours old
-        while (len(result["statuses"]) > 0 and api_requests < 10 and oldest_tweet_datetime > yesterday):
+        #  we haven't hit the hardcoded api request limit, keep getting results 
+        while (len(result["statuses"]) > 0 and api_requests < 50):
             args["max_id"] = self.min_id(statuses) - 1
             result = self.twitter.search.tweets(**args)
             statuses += self.extractTweets(result["statuses"], ticker)
             api_requests += 1
         
-        # Sorting by ID and reversing gives us the newest tweets first
-        statuses.sort(key=self.extract_id)
-        statuses.reverse()
 
         # Filter any tweets with more than 1 stock symbol in them
         statuses1 = [s for s in statuses if len(s.symbols) <= 1]
 
-        # Remove any tweets older than 24 hours
-        statuses2 = [s for s in statuses1 if s.created_at > yesterday]
+        return statuses1
 
-        return statuses2
+    
+
+    def getTweetsForStock(self, ticker, filter_retweets=True, filter_links=True):
+        tweets = self.fetchTweetsFromApi(ticker, filter_retweets, filter_links)
+
+        # Store these tweets into the database.
+        self.saveTweetsToDatabase(tweets);
+
+        # Fetch results from database
+        results = TweetModel.objects.filter(ticker = ticker).order_by("-id")
+
+        # Remove any tweets older than 24 hours
+        now = datetime.now(timezone.utc)
+        yesterday = now - timedelta(days=1)
+        results1 = [s for s in results if s.created_at > yesterday]
+
+        return results1
+
+    def saveTweetsToDatabase(self, tweets):
+        for t in tweets:
+            tm = TweetModel()
+            tm.id = t.id
+            tm.text = t.text
+            tm.created_at = t.created_at
+            tm.ticker = t.ticker
+            tm.is_retweet = t.is_retweet
+            tm.retweet_count = t.retweet_count
+            tm.fetched_at = t.fetched_at
+            
+            authorExists = AuthorModel.objects.filter(id = t.author.id).count() >= 1
+
+            if authorExists:
+                tm.author = AuthorModel.objects.get(id=t.author.id)
+            else:
+                am = AuthorModel()
+                am.id = t.author.id
+                am.name = t.author.name
+                am.followers_count = t.author.followers_count
+                tm.author = am
+                am.save()
+
+            tm.save()
+
+            for s in t.symbols:
+                sm = TweetSymbolsModel()
+                sm.symbol = s
+                sm.tweet = tm
+                sm.save()
+
+
+    def updateHistoricalDatabase(self):
+        # This is a list of the 100 biggest stocks according to:
+        # https://companiesmarketcap.com/
+        big_tickers = ["MSFT","AAPL","2222.SR","GOOG","AMZN","TSLA","FB","NVDA","BRK-A","TSM","TCEHY","JPM","V","BABA","UNH","JNJ","WMT","LVMUY","005930.KS","HD","BAC","NSRGY","ASML","600519.SS","PG","RHHBY","MA","ADBE","DIS","CRM","NFLX","XOM","NKE","OR.PA","PFE","NVO","ORCL","LLY","TM","CMCSA","TMO","KO","CSCO","1398.HK","300750.SZ","PYPL","AVGO","ACN","RELIANCE.NS","PEP","ABT","COST","CVX","VZ","DHR","MPNGF","INTC","MRK","ABBV","3968.HK","WFC","SHOP","AZN","SE","MCD","QCOM","NVS","UPS","AMD","TXN","MS","RYDAF","SAP","T","TCS.NS","PRX.VI","INTU","LIN","HESAF","CICHY","NEE","MDT","LOW","HON","KYCCF","SONY","ACGBY","UNP","SCHW","RY","TMUS","VOW3.DE","CDI.PA","BLK","PM","002594.SZ","CBA.AX","PNGAY","AMAT","AXP"]
+
+        for big_t in big_tickers:
+            tweets = self.fetchTweetsFromApi(big_t)
+            self.saveTweetsToDatabase(tweets)
+            print("Saved: " + big_t)
+
+
+
+            
+
+        
+            
+
+
+            
 
 
     # Helper functions
@@ -156,7 +259,7 @@ class TwitterStock:
     def extractTweets(self, statuses, ticker):
         result = []
         for s in statuses:
-            author = Author(s["user"]["id"], s["user"]["name"], s["user"]["followers_count"], s["user"]["created_at"])
+            author = Author(s["user"]["id"], s["user"]["name"], s["user"]["followers_count"])
             symbols = [symbol["text"] for symbol in s["entities"]["symbols"]]
             tweet = Tweet(s["id"], s["created_at"], s["full_text"], ticker, "retweeted_status" in s, s["retweet_count"], author, symbols)
             result.append(tweet)
