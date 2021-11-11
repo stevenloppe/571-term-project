@@ -163,7 +163,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 💅,0x1f485,149,0.755747604,27,36,86,NAIL POLISH,Miscellaneous Symbols and Pictographs
 🐶,0x1f436,148,0.654155755,12,37,99,DOG FACE,Miscellaneous Symbols and Pictographs
 🌚,0x1f31a,148,0.759894657,23,32,93,NEW MOON WITH FACE,Miscellaneous Symbols and Pictographs
-👽,0x1f47d,146,0.612456875,13,73,60,EXTRATERRESTRIAL ALIEN,Miscellaneous Symbols and Pictographs
+👽,0x1f47d,146,0.612456875,13,73,160,EXTRATERRESTRIAL ALIEN,Miscellaneous Symbols and Pictographs
 🎤,0x1f3a4,144,0.67089174,17,40,87,MICROPHONE,Miscellaneous Symbols and Pictographs
 👭,0x1f46d,144,0.667223526,20,36,88,TWO WOMEN HOLDING HANDS,Miscellaneous Symbols and Pictographs
 🎧,0x1f3a7,142,0.842970526,18,46,78,HEADPHONE,Miscellaneous Symbols and Pictographs
@@ -972,3 +972,7 @@ Emoji,Unicode codepoint,Occurrences,Position,Negative,Neutral,Positive,Unicode n
 🟢,-,-,-,0,1,1,GREEN CIRCLE,-
 🔴,-,-,-,1,1,0,RED CIRCLE,-
 🤷,-,-,-,1,1,1,PERSON SHRUGGING,-
+🥵,-,-,-,1,1,10,HOT FACE
+🔪,-,-,-,10,1,0,KITCHEN KNIFE
+🛰️,-,-,-,1,1,10,SATELLITE
+🤦,-,-,-,10,5,5,FACE PALM

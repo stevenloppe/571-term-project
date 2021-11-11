@@ -33,10 +33,15 @@ Ox
 Bear face
 6,13,28 --> 106,13,28
 
-
+Extraterrestrial Alien
+13,73,60 --> 13,73,160
 
 Added Rows:
 🟢,-,-,-,0,1,1,GREEN CIRCLE,-
 🔴,-,-,-,1,1,0,RED CIRCLE,-
 🙌,0x1f64c,1506,0.790600034,152,358,996,RAISING HANDS,Emoticons    (the table used the old name)
 🤷,-,-,-,1,1,1,PERSON SHRUGGING,-
+🥵,-,-,-,1,1,10,HOT FACE
+🔪,-,-,-,20,1,0,KITCHEN KNIFE
+🛰️,-,-,-,1,1,10,SATELLITE
+🤦,-,-,-,10,5,5,FACE PALM

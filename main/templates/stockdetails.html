@@ -15,9 +15,11 @@
         <h2 class="stock-name">Stock Ticker: ${{stock.stockTicker}}</h2>
         <h3>Last updated: {{stock.lastUpdated}} UTC</h3>
         <br>
+        <p>sentimentScore: {{stock.sentimentScore}}</p>
         <p>numTweets: {{stock.numTweets}}</p>
-        <p>positiveSentiment: {{stock.positiveSentiment}}</p>
-        <p>negativeSentiment: {{stock.negativeSentiment}}</p>
+        <p>numPositiveTweets: {{stock.numPositiveTweets}}</p>
+        <p>numNeutralTweets: {{stock.numNeutralTweets}}</p>
+        <p>numNegativeTweets: {{stock.numNegativeTweets}}</p>
         <p>Highlighted Tweets:</p>
 
         <table>
@@ -26,8 +28,7 @@
                     <th>Created</th>
                     <th>Text</th>
                     <th>Emojis</th>
-                    <th>+ Emoji Sentiment</th>
-                    <th>- Emoji Sentiment</th>
+                    <th>Emoji Sentiment</th>
                 </tr>
             </thead>
             <tbody>
@@ -36,7 +37,6 @@
                         <td>{{tweet.created_at}}</td>
                         <td>{{tweet.text}}</td>
                         <td>{{tweet.emojis}}</td>
-                        <td>{{tweet.emoji_sentiment}}</td>
                         <td>{{tweet.emoji_sentiment}}</td>
                     </tr>
                 {% endfor %}

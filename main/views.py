@@ -32,47 +32,49 @@ def stockdetails(request, sa_stockTicker):
     if sa_stockTicker.endswith("/"):
         sa_stockTicker = sa_stockTicker[:-1]
 
+    try:
+        stockAnalysis = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
+        # TODO: Once we don't need tweets in stockdetails.html check if the stock is out dated
+        #if (stock.is_outdated == False):
+            #return render(request, 'stockdetails.html', { 'stock' : stockAnalysis, 'tweets': tweets })
+    except:
+        stockAnalysis = StockAnalysis()
+
     twitterStock = TwitterStock()
     tweets = twitterStock.getTweetsForStock(sa_stockTicker)
     tweets = analyseTweets(tweets)
-
-    try:
-        stockAnalysis = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
-    except:
-        stockAnalysis = StockAnalysis()
 
     stockAnalysis.stockTicker = sa_stockTicker
     stockAnalysis.lastUpdated = datetime.utcnow()
     stockAnalysis.numTweets = len(tweets)
     
-    emojiPositiveSentimentSum = 0
+    sentimentSum = 0
+    numPositive = 0
+    numNeutral = 0
+    numNegative = 0
+
     for t in tweets:
-        textWeight = t.text_len / (t.text_len + t.emojis_len)
-        emojiWeight = t.emojis_len / (t.text_len + t.emojis_len)
-        emojiPositiveSentimentSum += (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
+        # Multiplying emoji sentiment weight by 8 so that 1 emoji = 8 characters in text
+        new_emojis_len = t.emojis_len * 8
+        textWeight = t.text_len / (t.text_len + new_emojis_len)
+        emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
+        sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
+        sentimentSum += sentiment
+        if sentiment < -0.25:
+            numNegative += 1
+        elif sentiment < 0.25:
+            numNeutral += 1
+        else:
+            numPositive += 1
 
     # positiveSentiment and negativeSentiment are integers, not floats so for now multiplying them by 100 so it isn't saved as 0
-    stockAnalysis.positiveSentiment = (emojiPositiveSentimentSum / len(tweets) ) * 100
-
-    # TODO: Need to determine both positive and negative sentiment for emojis
-    stockAnalysis.negativeSentiment = (emojiPositiveSentimentSum / len(tweets) ) * 100
-
-    print("Before PSentiment: ",stockAnalysis.positiveSentiment)
-    print("Before NSentiment: ",stockAnalysis.negativeSentiment)
+    stockAnalysis.sentimentScore = (sentimentSum / len(tweets) ) * 100
+    stockAnalysis.numPositiveTweets = numPositive
+    stockAnalysis.numNeutralTweets = numNeutral
+    stockAnalysis.numNegativeTweets = numNegative
 
     stockAnalysis.save()
 
-    stockAnalysis2 = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
-    print("After PSentiment: ",stockAnalysis2.positiveSentiment)
-    print("After NSentiment: ",stockAnalysis2.negativeSentiment)
-
-    #try:
-    #    stock = get_object_or_404(StockAnalysis, stockTicker=sa_stockTicker)
-    #except StockAnalysis.DoesNotExist:
-        #TODO: Run the method to calcuate sentiment and add it to the database
-    #    raise Http404("To be updated")
-    #if (stock.is_outdated)
-        #TODO: Run the method to calcuate sentiment and update the database
     return render(request, 'stockdetails.html', { 'stock' : stockAnalysis, 'tweets': tweets })
 
 
