@@ -60,6 +60,7 @@ def textSentiment(arg1):
                 pos.append("")
             elif (word.pos == "X"):
                 pos.append("")
+            else: pos.append("")
 
     for i in range(0,len(list1)):
         if list1[i] not in negation:
@@ -110,8 +111,9 @@ def textSentiment(arg1):
         if (numbigrams[g] == 0):
             list1.pop(numbigrams[g])
             list1.pop(numbigrams[g])
-        elif (numbigrams[g] == (numbigrams[g+1])+1):
-            list1.pop(numbigrams[g])
+        elif ((len(numbigrams) > 1) & (g<len(numbigrams)-1)):
+            if (numbigrams[g] == (numbigrams[g+1])+1):
+                list1.pop(numbigrams[g])
         else:
             #print(numbigrams[g])
             list1.pop(numbigrams[g])
@@ -126,7 +128,7 @@ def textSentiment(arg1):
     # IndexError: list index out of range
 
     #running sentiment on unigrams
-    for i in range(0,len(list1)):
+    for i in range(0,len(list1)-1):
         searchfile = open("stock_lex.csv", "r")
         for line in searchfile:
             y=line.find("\"",1,len(line))
@@ -141,7 +143,3 @@ def textSentiment(arg1):
         searchfile.close()
 
     return sentiment
-
-
-
-
