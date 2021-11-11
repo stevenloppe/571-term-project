@@ -99,18 +99,6 @@ class TwitterStock:
         self.twitter = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
 
 
-    # - Should have a function to get relevant tweets directly from the api
-    #   - Do I want to ignore tweets that we already have? This would mean getting the last date for a given ticker and not getting tweets from before that
-    #   - This would mean we NEVER update a tweet's info. So all analysis would be against the same dataset.
-    # - Should THEN have a function that inserts a list of tweets in the database
-    #       - If we haven't already stored this tweet, insert it
-    #      
-    # 
-    # 
-    # 
-    #
-
-
     def fetchTweetsFromApi(self, ticker, filter_retweets=True, filter_links=True):
         # Fetches as many tweets from the Twitter api that are not already stored 
         # in the database as we can
