@@ -3,6 +3,7 @@ from datetime import datetime, timedelta, timezone
 import emoji
 import regex
 import pytz
+import yfinance as yf
 
 from main.EmojiTranslation import emojiSentiment
 from main.TextSentiment import textSentiment
@@ -58,8 +59,8 @@ class Tweet:
         #       If it has no emojis should we be ignoring any score in the final calculation?
         self.emoji_sentiment = emojiSentiment(self.emojis)
         # Temp set to 0
-        #self.text_sentiment = textSentiment(self.text_without_emojis)
-        self.text_sentiment = 0
+        self.text_sentiment = textSentiment(self.text_without_emojis)
+        #self.text_sentiment = 0
 
 
 
@@ -98,6 +99,17 @@ class TwitterStock:
 
         self.twitter = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
 
+        self.temporary()
+
+    def getStockPrices(self, ticker, start):
+        end = start + timedelta(days=1)
+        ticker = yf.Ticker(ticker)
+        hist = ticker.history(start=start, end=end)
+        
+        for index, row in hist.iterrows():
+            if(index.year == start.year and index.month == start.month and index.day == start.day):
+                return row.Open, row.Close
+        
 
     def fetchTweetsFromApi(self, ticker, filter_retweets=True, filter_links=True):
         # Fetches as many tweets from the Twitter api that are not already stored 
