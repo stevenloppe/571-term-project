@@ -21,6 +21,7 @@ Packages:
 
 `pip install regex`
 `pip install twitter`
+`pip install yfinance`
 
 
 # Setting up database for storing tweets from twitter
