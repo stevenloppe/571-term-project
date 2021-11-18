@@ -1,10 +1,10 @@
 import stanza
 
-
+stanza.download('en')
+en_nlp = stanza.Pipeline('en',processors='tokenize,mwt,pos,lemma,depparse')
 
 def textSentiment(arg1):
     #choosing the processors to run on the text
-    en_nlp = stanza.Pipeline('en',processors='tokenize,mwt,pos,lemma,depparse')
 
     #lists 
     list1 = list()
@@ -79,8 +79,8 @@ def textSentiment(arg1):
             bigrams.append(bigram)
             
     #running sentiment analysis on bigrams generated
+    searchfile = open("stock_lex.csv", "r")
     for i in range(0,len(list1)-1):
-        searchfile = open("stock_lex.csv", "r")
         for line in searchfile:
             y=line.find("\"",1,len(line))
             x=line.find(bigrams[i])
@@ -89,12 +89,14 @@ def textSentiment(arg1):
                 #print(split_line[2])
                 if (neg[i] == "nn") | (neg[i] == "nstart"):
                     sentiment = sentiment + float(split_line[2])
+                    break
                 elif neg[i] == "ne":
                     sentiment = sentiment + float(split_line[3])
+                    break
                 #print(split_line)
                 #print(i)
                 numbigrams.append(i)
-        searchfile.close()
+
 
     #print(list1)
     #print(numbigrams)
@@ -102,10 +104,7 @@ def textSentiment(arg1):
     numbigrams.sort(reverse = True)
 
 
-    # BUG:
-    #  File "C:\...\StockSentimentTracker\main\TextSentiment.py", line 107, in textSentiment
-    # elif (numbigrams[g] == (numbigrams[g+1])+1):
-    # IndexError: list index out of range
+ 
 
     for g in range(0,(len(numbigrams))):
         if (numbigrams[g] == 0):
@@ -122,14 +121,10 @@ def textSentiment(arg1):
             neg.pop(numbigrams[g])
 
 
-    # BUG:
-    #  File "C:\...\main\TextSentiment.py", line 135, in textSentiment
-    # if (x == 1) & (y==len(list1[i])+1) & (z==pos[i]):
-    # IndexError: list index out of range
+
 
     #running sentiment on unigrams
     for i in range(0,len(list1)-1):
-        searchfile = open("stock_lex.csv", "r")
         for line in searchfile:
             y=line.find("\"",1,len(line))
             x=line.find(list1[i])
@@ -138,8 +133,14 @@ def textSentiment(arg1):
             if (x == 1) & (y==len(list1[i])+1) & (z==pos[i]):
                 if (neg[i] == "nn") | (neg[i] == "nstart"):
                     sentiment = sentiment + float(split_line[2])
+                    break
                 elif neg[i] == "ne":
                     sentiment = sentiment + float(split_line[3])
-        searchfile.close()
-
+                    break
+        
+    searchfile.close()
     return sentiment
+
+
+
+
