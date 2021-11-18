@@ -99,7 +99,7 @@ class TwitterStock:
 
         self.twitter = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
 
-        self.temporary()
+        
 
     def getStockPrices(self, ticker, start):
         end = start + timedelta(days=1)
