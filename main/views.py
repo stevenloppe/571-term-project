@@ -5,12 +5,16 @@ from django.views import generic
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
+
+from main.TextSentiment import textSentiment
 from .models import StockAnalysis, Tweet
 
 from twitter import *
 from main.twitter_stock import TwitterStock
 from main.twitter_stock import Tweet as TwitterTweet
 from main.twitter_stock import Author as TwitterAuthor
+
+import time
 
 TEMPLATE_DIRS = (
     'os.path.join(BASE_DIR, "templates"),'
@@ -90,7 +94,18 @@ def updateHistoricalDatabase(request):
     return HttpResponse("Finished")
 
 
+def textSentimentSpeedTest(request):
+    tweets = Tweet.objects.filter(ticker = "TSLA").order_by("id")[:10]
 
+    start = time.time()
+
+    for tweet in tweets:
+        #print(tweet.text)
+        textSentiment(tweet.text)
+
+    end = time.time();
+
+    return HttpResponse(f"Total Time: {str(end - start)}")
 
 
 

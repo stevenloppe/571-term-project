@@ -1,9 +1,12 @@
 import stanza
+import time
 
 stanza.download('en')
-en_nlp = stanza.Pipeline('en',processors='tokenize,mwt,pos,lemma,depparse')
+#en_nlp = stanza.Pipeline('en',processors='tokenize,mwt,pos,lemma,depparse')
+en_nlp = stanza.Pipeline('en',processors='tokenize,pos')
 
 def textSentiment(arg1):
+    start = time.time();
     #choosing the processors to run on the text
 
     #lists 
@@ -15,11 +18,16 @@ def textSentiment(arg1):
     negation = ["never","no","nothing","nowhere","noone","none","not","havent","hasnt","hadnt","cant","couldnt","shouldnt","wont","wouldnt","dont","doesnt","didnt","isnt","arent","aint","n't"]
     punctuation = ["^","[","]",".",":",";","?","$","!"]
 
+
+    nlp_start = time.time()
     #running the stanza pipeline on input
     en_doc = en_nlp(arg1)
+    nlp_end = time.time()
 
     #initializing global variable sentiment
     sentiment = float()
+
+    posstart = time.time()
 
     #create a list of all words and POS
     #print((en_doc))
@@ -72,6 +80,11 @@ def textSentiment(arg1):
         if (neg[i]== "nstart") | (neg[i]== "ne") & (list1[i+1] not in punctuation):
             neg[i+1] = "ne"
 
+    posend = time.time()
+
+
+
+    bigramStart = time.time()
 
     #creating a list of all bigrams (not all will be used)
     for i in range(0,len(list1)-1):
@@ -102,7 +115,7 @@ def textSentiment(arg1):
     #print(numbigrams)
     #removing bigrams from unigrams
     numbigrams.sort(reverse = True)
-
+    
 
  
 
@@ -120,9 +133,10 @@ def textSentiment(arg1):
             neg.pop(numbigrams[g])
             neg.pop(numbigrams[g])
 
+    bigramEnd = time.time()
 
 
-
+    unigramstart = time.time()
     #running sentiment on unigrams
     for i in range(0,len(list1)-1):
         for line in searchfile:
@@ -137,8 +151,28 @@ def textSentiment(arg1):
                 elif neg[i] == "ne":
                     sentiment = sentiment + float(split_line[3])
                     break
-        
+    unigramend = time.time()
+
     searchfile.close()
+
+
+    total = time.time() - start
+    nlp_total = nlp_end - nlp_start
+    pos_total = posend - posstart
+    bigram_total = bigramEnd - bigramStart
+    unigram_total = unigramend - unigramstart
+
+    totals = {
+        "npl": nlp_total, 
+        "pos": pos_total, 
+        "bigram": bigram_total, 
+        "unigram": unigram_total
+    }
+
+    print(f"textSentiment: {str(total)} - {total/total*100}%")
+    for key, value in totals.items():
+        print(f"    {key}: {str(value)} - {value * 100.0 / total}%")
+
     return sentiment
 
 
