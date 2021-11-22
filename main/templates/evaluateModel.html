@@ -1,0 +1,37 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}"/>
+    <title>{{ticker}} - Evaluation</title>
+</head>
+<body>
+    <main>
+        <h2 class="stock-name">Stock Ticker: ${{ticker}}</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Buy/Sell</th>
+                    <th>Sentiment</th>
+                    <th>Is Correct</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td>{{result.date}}</td>
+                        <td>{{result.isBuy}}</td>
+                        <td>{{result.sentiment}}</td>
+                        <td>{{result.isCorrect}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </main>
+</body>

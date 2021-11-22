@@ -8,6 +8,9 @@ urlpatterns = [
     re_path(r'^favicon\.ico$', favicon_view),
     path('', views.index, name='index'),
     path('updateHistoricalDatabase', views.updateHistoricalDatabase, name='updateHistoricalDatabase'),
+    path('evaluateModel', views.evaluateModel, name='evaluateModel'),
     path('<str:sa_stockTicker>', views.stockdetails, name='stockdetails'),
     path('<str:sa_stockTicker>/', views.stockdetails, name='stockdetails'),
+    
+    
 ]
