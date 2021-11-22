@@ -1,5 +1,5 @@
 from twitter import *
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 import emoji
 import regex
 import pytz
@@ -14,8 +14,31 @@ from main.models import Tweet as TweetModel
 from main.models import Author as AuthorModel
 from main.models import TweetSymbols as TweetSymbolsModel
 
+class Author:
+    def __init__(self, id, name, followers_count):
+        self.id  = id
+        self.name = name
+        self.followers_count = followers_count
+
+        # https://stackoverflow.com/a/7711869
+        #self.created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
+
+
 class Tweet:
-    def __init__(self, id, created_at, text, ticker, is_retweet, retweet_count, author, symbols):
+    def __init__(self, *args):
+        if(len(args) == 1):
+            tweet = args[0]
+            author = Author(tweet.author.id, tweet.author.name, tweet.author.followers_count)
+            id = tweet.id
+            created_at = tweet.created_at
+            text = tweet.text
+            ticker = tweet.ticker
+            is_retweet = tweet.is_retweet
+            retweet_count = tweet.retweet_count
+            symbols = tweet.symbols
+        else:
+            id, created_at, text, ticker, is_retweet, retweet_count, author, symbols = args
+
         self.id = id
 
         if(type(created_at) is datetime):
@@ -76,14 +99,6 @@ class Tweet:
         
         return emoji_list
 
-class Author:
-    def __init__(self, id, name, followers_count):
-        self.id  = id
-        self.name = name
-        self.followers_count = followers_count
-
-        # https://stackoverflow.com/a/7711869
-        #self.created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(created_at,'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
         
 
 
@@ -106,9 +121,18 @@ class TwitterStock:
         ticker = yf.Ticker(ticker)
         hist = ticker.history(start=start, end=end)
         
+        thing = []
+        thing2 = []
+
         for index, row in hist.iterrows():
+            thing.append(index)
+            thing2.append(row)
             if(index.year == start.year and index.month == start.month and index.day == start.day):
                 return row.Open, row.Close
+
+
+        # No market data, was probably closed
+        return -1, -1
         
 
     def fetchTweetsFromApi(self, ticker, filter_retweets=True, filter_links=True):
