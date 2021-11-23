@@ -9,6 +9,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('updateHistoricalDatabase', views.updateHistoricalDatabase, name='updateHistoricalDatabase'),
     path('evaluateModel', views.evaluateModel, name='evaluateModel'),
+    path('stockAnalysis_json', views.stockAnalysis_json, name='stockAnalysis_json_view'),
     path('textSentimentSpeedTest', views.textSentimentSpeedTest, name='textSentimentSpeedTest'),
     path('<str:sa_stockTicker>', views.stockdetails, name='stockdetails'),
     path('<str:sa_stockTicker>/', views.stockdetails, name='stockdetails'),

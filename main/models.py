@@ -5,13 +5,19 @@ from django.contrib import admin
 
 # Create your models here.
 class StockAnalysis(models.Model):
+    
     stockTicker = models.CharField('Stock Ticker', max_length=5)
     lastUpdated = models.DateTimeField('Last Updated')
     sentimentScore = models.IntegerField('Sentiment', default=0)
+    
     numTweets = models.IntegerField('Number of Tweets', default=0)
     numPositiveTweets = models.IntegerField('Number of Positive Tweets', default=0)
     numNeutralTweets = models.IntegerField('Number of Neutral Tweets', default=0)
     numNegativeTweets = models.IntegerField('Number of Negative Tweets', default=0)
+
+    topLikedTweetId = models.IntegerField('The ID of the most liked tweet', default=0)
+    topLikedTweet2Id = models.IntegerField('The ID of the second most liked tweet', default=0)
+    topRetweetedTweetId = models.IntegerField('The ID of the most retweeted tweet', default=0)
 
     def __str__(self):
         return self.stockTicker
@@ -32,6 +38,7 @@ class Tweet(models.Model):
     created_at = models.DateTimeField()
     ticker = models.CharField(max_length=255)
     is_retweet = models.BooleanField()
+    favorite_count = models.IntegerField(default=0)
     retweet_count = models.IntegerField()
     fetched_at = models.DateTimeField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
