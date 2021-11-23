@@ -126,7 +126,10 @@ def evaluateModel(request):
                 "date": d,
                 "sentiment": sentimentScore,
                 "isBuy": sentimentScore >= 0,
-                "isCorrect": sentimentScore >= 0 and topen > open
+                "isCorrect": sentimentScore >= 0 and topen > open,
+                "today_open": open,
+                "tomorrow_open": topen
+
             })
 
     return render(request, 'evaluateModel.html', {'results' : results, 'ticker': ticker})

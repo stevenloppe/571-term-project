@@ -20,6 +20,9 @@
                     <th>Buy/Sell</th>
                     <th>Sentiment</th>
                     <th>Is Correct</th>
+                    <th>Today Open</th>
+                    <th>Tomorrow Open</th>
+
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +32,8 @@
                         <td>{{result.isBuy}}</td>
                         <td>{{result.sentiment}}</td>
                         <td>{{result.isCorrect}}</td>
+                        <td>{{result.today_open | floatformat:2}}</td>
+                        <td>{{result.tomorrow_open | floatformat:2}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
