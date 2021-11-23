@@ -47,8 +47,7 @@ def stockAnalysis_json(request):
 
         try:
             stockAnalysis = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
-            # TODO: Once we don't need tweets in stockdetails.html check if the stock is out dated
-            if (stockAnalysis.is_outdated == False):
+            if (stockAnalysis.is_outdated() == False):
                 stockAnalysis_Json = create_json(stockAnalysis)
                 return JsonResponse(stockAnalysis_Json,safe=False,status=200)
         except:
@@ -96,9 +95,9 @@ def stockAnalysis_json(request):
             emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
             sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
             sentimentSum += sentiment
-            if sentiment < -0.25:
+            if sentiment < -0.12:
                 numNegative += 1
-            elif sentiment < 0.25:
+            elif sentiment < 0.12:
                 numNeutral += 1
             else:
                 numPositive += 1
@@ -240,9 +239,9 @@ def calcSentimentOfTweetSet(tweets):
         emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
         sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
         sentimentSum += sentiment
-        if sentiment < -0.25:
+        if sentiment < -0.12:
             numNegative += 1
-        elif sentiment < 0.25:
+        elif sentiment < 0.12:
             numNeutral += 1
         else:
             numPositive += 1
