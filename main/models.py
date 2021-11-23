@@ -35,6 +35,14 @@ class Tweet(models.Model):
     retweet_count = models.IntegerField()
     fetched_at = models.DateTimeField()
     author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    sentiment = models.IntegerField(default=-2) #Default value is an invalid value
+    sentiment_version = models.IntegerField(default=0)
+
+    # We need to pre-calcuate the sentiment of each tweet since it takes too long to do on the fly.
+    # If we ever update our analysis the precalculated sentiments would become invalid so we have
+    # A version number on each tweet to tell us which version of the analysis we have.
+    # This global variable is what we will increment if we change our analysis
+    CURRENT_SENTIMENT_VERSION = 1
     
 
 
