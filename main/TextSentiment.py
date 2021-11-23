@@ -1,9 +1,35 @@
+from typing import TYPE_CHECKING
 import stanza
+import time
+import csv
 
 stanza.download('en')
-en_nlp = stanza.Pipeline('en',processors='tokenize,mwt,pos,lemma,depparse')
+#en_nlp = stanza.Pipeline('en',processors='tokenize,mwt,pos,lemma,depparse')
+en_nlp = stanza.Pipeline('en',processors='tokenize,pos')
+
+
+# This file is static and we don't want to read it for each tweet.
+# So we just read it once on start up and use it.
+stock_lex = open('stock_lex.csv', 'r')
+reader = csv.reader(stock_lex)
+bigramsDict = {}
+unigramDict = {}
+for row in reader:
+    if(row[1] == ''): # Bigrams are represented by a POS of an empty string
+        bigramsDict[row[0]] = {
+            "aff_score": row[2],
+            "neg_score": row[3]
+        }
+    else: # if it has a POS value then it is a unigram
+        unigramDict[row[0]] = {
+            "pos": row[1],
+            "aff_score": row[2],
+            "neg_score": row[3]
+        }
+stock_lex.close()
 
 def textSentiment(arg1):
+    start = time.time();
     #choosing the processors to run on the text
 
     #lists 
@@ -15,11 +41,16 @@ def textSentiment(arg1):
     negation = ["never","no","nothing","nowhere","noone","none","not","havent","hasnt","hadnt","cant","couldnt","shouldnt","wont","wouldnt","dont","doesnt","didnt","isnt","arent","aint","n't"]
     punctuation = ["^","[","]",".",":",";","?","$","!"]
 
+
+    nlp_start = time.time()
     #running the stanza pipeline on input
     en_doc = en_nlp(arg1)
+    nlp_end = time.time()
 
     #initializing global variable sentiment
     sentiment = float()
+
+    posstart = time.time()
 
     #create a list of all words and POS
     #print((en_doc))
@@ -72,39 +103,31 @@ def textSentiment(arg1):
         if (neg[i]== "nstart") | (neg[i]== "ne") & (list1[i+1] not in punctuation):
             neg[i+1] = "ne"
 
+    posend = time.time()
 
-    #creating a list of all bigrams (not all will be used)
-    for i in range(0,len(list1)-1):
-            bigram=list1[i]+" "+list1[i+1]
-            bigrams.append(bigram)
-            
-    #running sentiment analysis on bigrams generated
-    searchfile = open("stock_lex.csv", "r")
-    for i in range(0,len(list1)-1):
-        for line in searchfile:
-            y=line.find("\"",1,len(line))
-            x=line.find(bigrams[i])
-            if (x == 1) & (y==len(bigrams[i])+1):
-                split_line=line.split(",")
-                #print(split_line[2])
-                if (neg[i] == "nn") | (neg[i] == "nstart"):
-                    sentiment = sentiment + float(split_line[2])
-                    break
-                elif neg[i] == "ne":
-                    sentiment = sentiment + float(split_line[3])
-                    break
-                #print(split_line)
-                #print(i)
-                numbigrams.append(i)
+    bigramStart = time.time()
 
+    for i in range(0,len(list1)-1):
+        bigram = list1[i]+" "+list1[i+1]
+        if(bigram in bigramsDict.keys()):
+            if (neg[i] == "nn") | (neg[i] == "nstart"):
+                sentiment = sentiment + float(bigramsDict[bigram]["aff_score"])
+                break
+            elif neg[i] == "ne":
+                sentiment = sentiment + float(bigramsDict[bigram]["neg_score"])
+                break
+            #print(split_line)
+            #print(i)
+            numbigrams.append(i)
+        
+
+    bigramEnd = time.time()
 
     #print(list1)
     #print(numbigrams)
     #removing bigrams from unigrams
     numbigrams.sort(reverse = True)
-
-
- 
+    
 
     for g in range(0,(len(numbigrams))):
         if (numbigrams[g] == 0):
@@ -120,25 +143,37 @@ def textSentiment(arg1):
             neg.pop(numbigrams[g])
             neg.pop(numbigrams[g])
 
-
-
-
-    #running sentiment on unigrams
+    # unigram
+    unigramstart = time.time()
     for i in range(0,len(list1)-1):
-        for line in searchfile:
-            y=line.find("\"",1,len(line))
-            x=line.find(list1[i])
-            split_line=line.split(",")
-            z=split_line[1]
-            if (x == 1) & (y==len(list1[i])+1) & (z==pos[i]):
-                if (neg[i] == "nn") | (neg[i] == "nstart"):
-                    sentiment = sentiment + float(split_line[2])
-                    break
-                elif neg[i] == "ne":
-                    sentiment = sentiment + float(split_line[3])
-                    break
-        
-    searchfile.close()
+        tweet_word = list1[i]
+        if tweet_word in unigramDict.keys() and pos[i] == unigramDict[tweet_word]["pos"]:
+            if neg[i] == "nn" or neg[i] == "nstart":
+                sentiment += float(unigramDict[tweet_word]["aff_score"])
+                break
+            elif neg[i] == "ne":
+                sentiment += float(unigramDict[tweet_word]["neg_score"])
+                break
+
+    unigramend = time.time()
+
+    total = time.time() - start
+    nlp_total = nlp_end - nlp_start
+    pos_total = posend - posstart
+    bigram_total = bigramEnd - bigramStart
+    unigram_total = unigramend - unigramstart
+
+    totals = {
+        "npl": nlp_total, 
+        "pos": pos_total, 
+        "bigram": bigram_total, 
+        "unigram": unigram_total
+    }
+
+    #print(f"textSentiment: {str(total)} - {total/total*100}%")
+    #for key, value in totals.items():
+    #    print(f"    {key}: {str(value)} - {value * 100.0 / total}%")
+
     return sentiment
 
 
