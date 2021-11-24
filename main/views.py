@@ -12,8 +12,8 @@ from .models import StockAnalysis, Tweet
 
 from twitter import *
 from main.twitter_stock import TwitterStock
-from main.twitter_stock import Tweet as TwitterTweet
-from main.twitter_stock import Author as TwitterAuthor
+#from main.twitter_stock import Tweet as TwitterTweet
+#from main.twitter_stock import Author as TwitterAuthor
 
 import time
 
@@ -45,16 +45,16 @@ def stockdetails(request, sa_stockTicker):
     except:
         stockAnalysis = StockAnalysis()
 
-    twitterStock = TwitterStock()
-    tweets = twitterStock.getTweetsForStock(sa_stockTicker)
-    tweets = analyseTweets(tweets)
+    #twitterStock = TwitterStock()
+    tweets = Tweet.getTweetsForStock(sa_stockTicker)
+    #tweets = analyseTweets(tweets)
 
     stockAnalysis.stockTicker = sa_stockTicker
     stockAnalysis.lastUpdated = datetime.utcnow()
     stockAnalysis.numTweets = len(tweets)
     
     
-    sentimentScore, numPositive, numNeutral, numNegative  = calcSentimentOfTweetSet(tweets)
+    sentimentScore, numPositive, numNeutral, numNegative  = Tweet.calcSentimentOfTweetSet(tweets)
 
     # positiveSentiment and negativeSentiment are integers, not floats so for now multiplying them by 100 so it isn't saved as 0
     stockAnalysis.sentimentScore = sentimentScore * 100
@@ -68,9 +68,8 @@ def stockdetails(request, sa_stockTicker):
 
 
 def updateHistoricalDatabase(request):
-    twitter_stock = TwitterStock()
     try:
-        twitter_stock.updateHistoricalDatabase()    
+        Tweet.updateHistoricalDatabase()    
     except TwitterHTTPError:
         # I guess return what we have so far? 
         return HttpResponse("API Rate Limit")
@@ -78,6 +77,11 @@ def updateHistoricalDatabase(request):
     
     return HttpResponse("Finished")
 
+def updateSentimentForStoredTweets(request):
+    Tweet.updateSentimentForDatabaseTweets()
+
+    return HttpResponse("Finished")
+    
 
 
 def evaluateModel(request):
@@ -108,16 +112,12 @@ def evaluateModel(request):
 
     results = []
 
-    thing = []
-    for t in tweets:
-        thing.append(t)
-
     for d in dates:
         todaysTweets = [t for t in tweets if t.created_at.date() == d]
         if(len(todaysTweets) <= 0):
             sentimentScore = 0
         else:   
-            sentimentScore, _, _, _ = calcSentimentOfTweetSet(todaysTweets)
+            sentimentScore, _, _, _ = Tweet.calcSentimentOfTweetSet(todaysTweets)
         
         twitterStock = TwitterStock();
         open,close = twitterStock.getStockPrices(ticker, d)
@@ -146,7 +146,8 @@ def textSentimentSpeedTest(request):
 
     for tweet in tweets:
         #print(tweet.text)
-        textSentiment(tweet.text)
+        #textSentiment(tweet.text)
+        tweet.calcSentiment()
 
     end = time.time();
 
@@ -156,45 +157,52 @@ def textSentimentSpeedTest(request):
 
 
 
-def calcSentimentOfTweetSet(tweets):
-    if(isinstance(tweets[0], Tweet)):
-        newList = [TwitterTweet(t) for t in tweets]
-        tweets = newList
+# def calcSentimentOfTweetSet(tweets):
+    
+#     # Working towards tweets always being [models.Tweet]
 
-    sentimentSum = 0
-    numPositive = 0
-    numNeutral = 0
-    numNegative = 0
+#     # if(isinstance(tweets[0], Tweet)):
+#     #     newList = [TwitterTweet(t) for t in tweets]
+#     #     tweets = newList
 
-    for t in tweets:
-        # Multiplying emoji sentiment weight by 8 so that 1 emoji = 8 characters in text
-        new_emojis_len = t.emojis_len * 8
-        textWeight = t.text_len / (t.text_len + new_emojis_len)
-        emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
-        sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
-        sentimentSum += sentiment
-        if sentiment < -0.25:
-            numNegative += 1
-        elif sentiment < 0.25:
-            numNeutral += 1
-        else:
-            numPositive += 1
+#     sentimentSum = 0
+#     numPositive = 0
+#     numNeutral = 0
+#     numNegative = 0
 
-    sentimentScore = sentimentSum / len(tweets) 
+#     for t in tweets:
+        
+#         sentiment = t.calcSentiment()
+#         # Multiplying emoji sentiment weight by 8 so that 1 emoji = 8 characters in text
+#         # new_emojis_len = t.emojis_len * 8
+#         # textWeight = t.text_len / (t.text_len + new_emojis_len)
+#         # emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
+#         # sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
 
-    return (sentimentScore, numPositive, numNeutral, numNegative)
 
-def analyseTweets(tweets):
-    #TODO: At the moment the tweet analysis happens in the twitter_stock.Tweet constructor
-    #       So just returning a list of those objects will "analyse" the tweets.
-    #       This is not a very good way of doing this.
-    results = []
+#         sentimentSum += sentiment
+#         if sentiment < -0.25:
+#             numNegative += 1
+#         elif sentiment < 0.25:
+#             numNeutral += 1
+#         else:
+#             numPositive += 1
 
-    for t in tweets:
-        #id, created_at, text, ticker, is_retweet, retweet_count, author, symbols
-        s = t.symbols.all()
-        author = TwitterAuthor(t.author.id, t.author.name, t.author.followers_count)
-        tt = TwitterTweet(t.id, t.created_at, t.text, t.ticker, t.is_retweet, t.retweet_count, author, t.symbols.all())
-        results.append(tt)
+#     sentimentScore = sentimentSum / len(tweets) 
 
-    return results
+#     return (sentimentScore, numPositive, numNeutral, numNegative)
+
+# def analyseTweets(tweets):
+#     #TODO: At the moment the tweet analysis happens in the twitter_stock.Tweet constructor
+#     #       So just returning a list of those objects will "analyse" the tweets.
+#     #       This is not a very good way of doing this.
+#     results = []
+
+#     for t in tweets:
+#         #id, created_at, text, ticker, is_retweet, retweet_count, author, symbols
+#         s = t.symbols.all()
+#         author = TwitterAuthor(t.author.id, t.author.name, t.author.followers_count)
+#         tt = TwitterTweet(t.id, t.created_at, t.text, t.ticker, t.is_retweet, t.retweet_count, author, t.symbols.all())
+#         results.append(tt)
+
+#     return results
