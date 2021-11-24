@@ -34,10 +34,11 @@ from django.db.models import Max
 #             text = tweet.text
 #             ticker = tweet.ticker
 #             is_retweet = tweet.is_retweet
+#             favorite_count = tweet.favorite_count
 #             retweet_count = tweet.retweet_count
 #             symbols = tweet.symbols
 #         else:
-#             id, created_at, text, ticker, is_retweet, retweet_count, author, symbols = args
+#             id, created_at, text, ticker, is_retweet, favorite_count, retweet_count, author, symbols = args
 
 #         self.id = id
 
@@ -51,6 +52,7 @@ from django.db.models import Max
 #         self.text = text
 #         self.ticker = ticker
 #         self.is_retweet = is_retweet
+#         self.favorite_count = favorite_count
 #         self.retweet_count = retweet_count
         
         
@@ -75,16 +77,8 @@ from django.db.models import Max
 #         self.text_without_emojis = emoji.replace_emoji(text, "")
 #         self.emojis_len = len(self.emojis)
 #         self.text_len = len(self.text_without_emojis)
-
-#         # TODO: Don't we need to calculate both positive and negative sentiment?
-#         #       This only returns a single number
-#         # TODO: Does this function behave appropriately if there are no emojis? 
-#         #       If it has no emojis should we be ignoring any score in the final calculation?
 #         self.emoji_sentiment = emojiSentiment(self.emojis)
-#         # Temp set to 0
 #         self.text_sentiment = textSentiment(self.text_without_emojis)
-#         #self.text_sentiment = 0
-
 
 
 #     # Extract Emojis
@@ -230,6 +224,7 @@ class TwitterStock:
     #         tm.created_at = t.created_at
     #         tm.ticker = t.ticker
     #         tm.is_retweet = t.is_retweet
+    #         tm.favorite_count = t.favorite_count
     #         tm.retweet_count = t.retweet_count
     #         tm.fetched_at = t.fetched_at
             
@@ -294,11 +289,7 @@ class TwitterStock:
     #     for s in statuses:
     #         author = Author(s["user"]["id"], s["user"]["name"], s["user"]["followers_count"])
     #         symbols = [symbol["text"] for symbol in s["entities"]["symbols"]]
-    #         tweet = Tweet(s["id"], s["created_at"], s["full_text"], ticker, "retweeted_status" in s, s["retweet_count"], author, symbols)
+    #         tweet = Tweet(s["id"], s["created_at"], s["full_text"], ticker, "retweeted_status" in s, s["favorite_count"], s["retweet_count"], author, symbols)
     #         result.append(tweet)
 
     #     return result
-            
-            
-
-        

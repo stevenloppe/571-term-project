@@ -3,7 +3,7 @@ from django.http.response import HttpResponseBadRequest
 from django.shortcuts import render
 from django.http import HttpResponse, Http404
 from django.views import generic
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
 
@@ -32,39 +32,106 @@ def index(request):
     return render(request,"index.html")
 
 
-
 def stockdetails(request, sa_stockTicker):
-    if sa_stockTicker.endswith("/"):
-        sa_stockTicker = sa_stockTicker[:-1]
+    # Moved to stockAnalysis_json()
+    return render(request, 'stockdetails.html', {'ticker': sa_stockTicker})
 
-    try:
-        stockAnalysis = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
-        # TODO: Once we don't need tweets in stockdetails.html check if the stock is out dated
-        #if (stock.is_outdated == False):
-            #return render(request, 'stockdetails.html', { 'stock' : stockAnalysis, 'tweets': tweets })
-    except:
-        stockAnalysis = StockAnalysis()
 
-    #twitterStock = TwitterStock()
-    tweets = Tweet.getTweetsForStock(sa_stockTicker)
-    #tweets = analyseTweets(tweets)
+def stockAnalysis_json(request):
 
-    stockAnalysis.stockTicker = sa_stockTicker
-    stockAnalysis.lastUpdated = datetime.utcnow()
-    stockAnalysis.numTweets = len(tweets)
+    if request.is_ajax and request.method == "GET":
+        sa_stockTicker = str(request.GET.get('stockTicker'))
+
+        if sa_stockTicker.endswith("/"):
+            sa_stockTicker = sa_stockTicker[:-1]
+
+        try:
+            stockAnalysis = StockAnalysis.objects.get(stockTicker = sa_stockTicker)
+            if (stockAnalysis.is_outdated() == False):
+                stockAnalysis_Json = create_json(stockAnalysis)
+                return JsonResponse(stockAnalysis_Json,safe=False,status=200)
+        except:
+            stockAnalysis = StockAnalysis()
     
-    
-    sentimentScore, numPositive, numNeutral, numNegative  = Tweet.calcSentimentOfTweetSet(tweets)
+        #twitterStock = TwitterStock()
+        tweets = Tweet.getTweetsForStock(sa_stockTicker)
+        #tweets = analyseTweets(tweets)
 
-    # positiveSentiment and negativeSentiment are integers, not floats so for now multiplying them by 100 so it isn't saved as 0
-    stockAnalysis.sentimentScore = sentimentScore * 100
-    stockAnalysis.numPositiveTweets = numPositive
-    stockAnalysis.numNeutralTweets = numNeutral
-    stockAnalysis.numNegativeTweets = numNegative
+        stockAnalysis.stockTicker = sa_stockTicker
+        stockAnalysis.lastUpdated = datetime.utcnow()
+        stockAnalysis.numTweets = len(tweets)
+        
+        sentimentSum = 0
+        numPositive = 0
+        numNeutral = 0
+        numNegative = 0
 
-    stockAnalysis.save()
+        topRetweetedTweetRetweets = 1
+        topRetweetedTweetId = 0
 
-    return render(request, 'stockdetails.html', { 'stock' : stockAnalysis, 'tweets': tweets })
+        topLikedTweetLikes = 1
+        topLikedTweetId = 0
+
+        topLikedTweet2Likes = 1
+        topLikedTweet2Id = 0
+
+
+        for t in tweets:
+
+            if t.favorite_count > topLikedTweetLikes:
+                topLikedTweetLikes = t.favorite_count
+                topLikedTweetId = t.id
+            elif t.retweet_count > topRetweetedTweetRetweets:
+                topRetweetedTweetRetweets = t.retweet_count
+                topRetweetedTweetId = t.id
+            elif t.favorite_count > topLikedTweet2Likes:
+                topLikedTweet2Likes = t.favorite_count
+                topLikedTweet2Id = t.id
+            UPDATE HERE TO MOVE THE UPDATED ANALYSIS TO  Tweet.calcSentiment
+                        UPDATE HERE TO MOVE THE UPDATED ANALYSIS TO  Tweet.calcSentiment
+                                    UPDATE HERE TO MOVE THE UPDATED ANALYSIS TO  Tweet.calcSentiment
+            # Multiplying emoji sentiment weight by 8 so that 1 emoji = 8 characters in text
+            new_emojis_len = t.emojis_len * 8
+            textWeight = t.text_len / (t.text_len + new_emojis_len)
+            emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
+            sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
+            sentimentSum += sentiment
+            if sentiment < -0.12:
+                numNegative += 1
+            elif sentiment < 0.12:
+                numNeutral += 1
+            else:
+                numPositive += 1
+
+        # positiveSentiment and negativeSentiment are integers, not floats so for now multiplying them by 100 so it isn't saved as 0
+        if len(tweets) > 0:
+            stockAnalysis.sentimentScore = (sentimentSum / len(tweets) ) * 100
+        else:
+            stockAnalysis.sentimentScore = 0
+
+        stockAnalysis.numPositiveTweets = numPositive
+        stockAnalysis.numNeutralTweets = numNeutral
+        stockAnalysis.numNegativeTweets = numNegative
+        stockAnalysis.topLikedTweetId = topLikedTweetId
+        stockAnalysis.topLikedTweet2Id = topLikedTweet2Id
+        stockAnalysis.topRetweetedTweetId = topRetweetedTweetId
+
+        stockAnalysis.save()
+
+        stockAnalysis_Json = create_json(stockAnalysis)
+        return JsonResponse(stockAnalysis_Json,safe=False,status=200)
+
+    # If not is_ajax request
+    print("None-ajax request\n")
+    return JsonResponse({}, status=400)
+
+
+def create_json(stockAnalysis):
+    return '{ "stockTicker":"'+str(stockAnalysis.stockTicker)+'", "lastUpdated":"'+str(stockAnalysis.lastUpdated)+'", "sentimentScore":"'+str(stockAnalysis.sentimentScore)+'", "numTweets":"'+str(stockAnalysis.numTweets)+'", "numPositiveTweets":"'+str(stockAnalysis.numPositiveTweets)+'", "numNeutralTweets":"'+str(stockAnalysis.numNeutralTweets)+'", "numNegativeTweets":"'+str(stockAnalysis.numNegativeTweets)+'", "topRetweetedTweetId":"'+str(stockAnalysis.topRetweetedTweetId)+'", "topLikedTweetId":"'+str(stockAnalysis.topLikedTweetId)+'", "topLikedTweet2Id":"'+str(stockAnalysis.topLikedTweet2Id)+'"}'
+
+
+
+
 
 
 def updateHistoricalDatabase(request):
@@ -164,6 +231,9 @@ def textSentimentSpeedTest(request):
 #     # if(isinstance(tweets[0], Tweet)):
 #     #     newList = [TwitterTweet(t) for t in tweets]
 #     #     tweets = newList
+        if sentiment < -0.12:
+        UPDATE THE NEG/POS NUM OF TWEETS TO USE -0.12 AND 0.12
+        elif sentiment < 0.12:
 
 #     sentimentSum = 0
 #     numPositive = 0

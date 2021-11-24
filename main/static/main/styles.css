@@ -5,6 +5,24 @@ html, body {
   background-color: #fff;
 }
 
+.content {
+  margin: auto;
+  width: 50%;
+  padding: 20px;
+  padding-top: 3em;
+}
+
+.content > h1 {
+  text-align: center;
+  font-size: 8.5em;
+  padding-bottom: 2rem;
+  justify-content: center;
+}
+
+.invisible {
+  display: none;
+}
+
 .hero-section {
   margin: auto;
   width: 50%;
@@ -14,12 +32,6 @@ html, body {
   text-align: center;
 }
 
-main > h1 {
-text-align: center;
-font-size: 8.5em;
-padding-bottom: 2rem;
-justify-content: center;
-}
 
 .searchbar
 {
