@@ -27,10 +27,10 @@
     <div class="content">
         <!-- Loading Scene -->
         <div id="spinner-box" class="text-center mt-3">
-          <div class="spinner-border" style="width: 4rem; height: 4rem; margin-top: 20%;" role="status"></div>
+          <div class="spinner-border" style="width: 4rem; height: 4rem; margin-top: 25%;" role="status"></div>
           <br><br>
           <h4>Calculating...</h4>
-          <br>
+          <br><br>
           <h5>This may take several minutes.</h5>
         </div>
   
@@ -40,9 +40,36 @@
           <hr>
           <h1 style="font-size: 5em;">$<span id="stockTicker"></span></h1>
           <h4>Last updated: <span id="lastUpdated"></span></h4>
+          <br><br>
+          <h2>Sentiment</h2>
+          <div class="sentimentRating">
+            <h5 style="margin-bottom: -2em;">Low Sentiment</h5>
+            <div class="sentimentRating-content">
+                <h3 id="rating-pointer" style="margin-bottom: -1em;">
+                  <span id="sentimentScore"></span>
+                  <br>
+                  |
+                </h3>  
+                <hr style="width: 120%; margin-left: -10%;">
+                <div class="numbers" style="margin-top: -1.9em; color: darkgray;">
+                  <h8>|</h8><h8>|</h8><h8>|</h8><h8>|</h8><h8>|</h8>
+                </div>
+                <br>
+                <div style="display: flex; margin-top: -16px;">
+                  <h5 style="margin-left: -20px;">-100</h5>
+                  <h5 style="padding-left: 65px;">-50</h5>
+                  <h5 style="padding-left: 82px;">0</h5>
+                  <h5 style="padding-left: 80px;">50</h5>
+                  <h5 style="padding-left: 76px;">100</h5>
+              </div>
+            </div>
+            <h5 style="margin-bottom: -2em;">High Sentiment</h5>
+          </div>
           <br>
-          <h1>Sentiment Score: <span id="sentimentScore"></span></h1>
-          <br>
+          <h5>Overall Sentiment is: <b><span id="sentimentDescription"></span></b></h5>
+          <br><br>
+
+          <h2>Conversation</h2>
           <p>There were <b><span id="numTweets"></span></b> tweets mentioning this stock in the past 24 hours.</p>
   
           <div class="progress" style="height: 20px;">
@@ -58,8 +85,11 @@
   
           <h3 id="relevant-tweets" class="invisible">Relevant Tweets</h3>
           <div id="featured-tweet-1"></div>
+          <br>
           <div id="featured-tweet-2"></div>
+          <br>
           <div id="featured-tweet-3"></div>
+          <br>
   
         </div>    
       </div>

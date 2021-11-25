@@ -33,6 +33,30 @@ html, body {
 }
 
 
+/* stockdetails.html specific */
+.sentimentRating {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+}
+
+.sentimentRating-content {
+  width: 400px;
+}
+
+.sentimentRating-content > .numbers {
+  display: flex;
+  justify-content: space-between;
+}
+
+.pointer-arrow {
+  display: flex;
+  justify-content: center;
+}
+
+/* index.html specific */
 .searchbar
 {
 display: flex;
