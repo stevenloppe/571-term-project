@@ -32,10 +32,15 @@ Packages:
 4. Run `python manage.py migrate`
 
 
-OPTIONAL TODO:
- - Only update stock sentiment information if the information if out of date
- - Add a loading circle or something while waiting for sentiment calculation
- - Finish frontend
-     - Add a table for 'most recently searched for sentiments' to home page
-     - Add an About section to the home page
-     - everything in stockdetails.html
+FRONTEND TODO:
+
+index.html:
+ - Everything
+ - Add a table for 'most recently searched for sentiments'
+ - Add an 'ABOUT' section
+
+stockdetails.html:
+ - Center sentimentscore text
+ - Clean up numTweets display
+ - Show last updated time in a more readable format and local time zone
+ - Make it look good on smaller screens

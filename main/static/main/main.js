@@ -36,11 +36,36 @@ $.ajax({
         const stockAnalysis = JSON.parse(response);
         document.getElementById("stockTicker").innerHTML = stockAnalysis.stockTicker;
         document.getElementById("lastUpdated").innerHTML = stockAnalysis.lastUpdated;
-        document.getElementById('sentimentScore').innerHTML = stockAnalysis.sentimentScore;
+        document.getElementById('sentimentScore').innerHTML = parseInt(stockAnalysis.sentimentScore);
         document.getElementById('numTweets').innerHTML += stockAnalysis.numTweets;
         document.getElementById('numPositiveTweets').innerHTML += stockAnalysis.numPositiveTweets;
         document.getElementById('numNeutralTweets').innerHTML += stockAnalysis.numNeutralTweets;
         document.getElementById('numNegativeTweets').innerHTML += stockAnalysis.numNegativeTweets;
+
+        const sentimentDescription = document.getElementById('sentimentDescription');
+        const sentiment = parseInt(stockAnalysis.sentimentScore);
+        if (sentiment > 50){
+            sentimentDescription.innerHTML += "Very Positive";
+        }
+        else if (sentiment > 15) {
+            sentimentDescription.innerHTML += "Positive";
+        }
+        else if (sentiment > -15) {
+            sentimentDescription.innerHTML += "Neutral";
+        }
+        else if (sentiment > -50) {
+            sentimentDescription.innerHTML += "Negative";
+        }
+        else {
+            sentimentDescription.innerHTML += "Very Negative";
+        }
+
+        const ratingPointer = document.getElementById('rating-pointer');
+        const pointerOffset = 196 + (parseInt(stockAnalysis.sentimentScore) * 2); // 80 pixels per 0.5 increment
+        ratingPointer.setAttribute('style','padding-left:'+pointerOffset+'px; margin-bottom: -0.8em;');
+        //const ratingText = document.getElementById('sentimentScore');
+        //ratingText.setAttribute('style','padding-left:'+Number(pointerOffset-16)+'px;');
+        console.log('pointerOffset',pointerOffset);
 
         // Update bar lengths to match their ratios        
         if (stockAnalysis.numTweets > 1) {
@@ -60,7 +85,6 @@ $.ajax({
             const negBarRatio = parseInt(stockAnalysis.numNegativeTweets)/parseInt(stockAnalysis.numTweets)*100;
             negTweetsBar.setAttribute('aria-valuenow',negBarRatio);
             negTweetsBar.setAttribute('style','width:'+Number(negBarRatio)+'%; background-color:#bf2626;');
-
         }
 
         const relevantTweets = document.getElementById('relevant-tweets');
