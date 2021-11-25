@@ -137,7 +137,7 @@ def evaluateModel(request):
         if(len(todaysTweets) <= 0):
             sentimentScore = 0
         else:   
-            sentimentScore, _, _, _ = Tweet.calcSentimentOfTweetSet(todaysTweets)
+            sentimentScore, _, _, _, _, _, _ = Tweet.calcSentimentOfTweetSet(todaysTweets)
         
         twitterStock = TwitterStock();
         open,close = twitterStock.getStockPrices(ticker, d)
