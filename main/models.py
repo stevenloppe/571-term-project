@@ -265,7 +265,7 @@ class Tweet(models.Model):
 
         for big_t in big_tickers:
             tweets = cls.fetchTweetsFromApi(big_t)
-            cls.saveTweetsToDatabase(tweets)
+            cls.saveTweetsToDatabase(tweets, big_t)
             print("Saved: " + big_t)
         
     @classmethod
@@ -275,19 +275,43 @@ class Tweet(models.Model):
         numNeutral = 0
         numNegative = 0
 
+        topRetweetedTweetRetweets = 1
+        topRetweetedTweetId = 0
+
+        topLikedTweetLikes = 1
+        topLikedTweetId = 0
+
+        topLikedTweet2Likes = 1
+        topLikedTweet2Id = 0
+
+
         for t in tweets:
+
+            if t.favorite_count > topLikedTweetLikes:
+                topLikedTweetLikes = t.favorite_count
+                topLikedTweetId = t.id
+            elif t.retweet_count > topRetweetedTweetRetweets:
+                topRetweetedTweetRetweets = t.retweet_count
+                topRetweetedTweetId = t.id
+            elif t.favorite_count > topLikedTweet2Likes:
+                topLikedTweet2Likes = t.favorite_count
+                topLikedTweet2Id = t.id
             sentiment = t.getSentimentAndUpdate()
             sentimentSum += sentiment
-            if sentiment < -0.25:
+            if sentiment < -0.12:
                 numNegative += 1
-            elif sentiment < 0.25:
+            elif sentiment < 0.12:
                 numNeutral += 1
             else:
                 numPositive += 1
 
-        sentimentScore = sentimentSum / len(tweets) 
+        # sentimentScore is an integer, not a float so for now multiplying them by 100 so it isn't saved as 0
+        if len(tweets) > 0:
+            sentimentScore = (sentimentSum / len(tweets) ) * 100
+        else:
+            sentimentScore = 0 
 
-        return (sentimentScore, numPositive, numNeutral, numNegative)
+        return (sentimentScore, numPositive, numNeutral, numNegative, topLikedTweetId, topLikedTweet2Id, topRetweetedTweetId)
 
     @classmethod
     def updateSentimentForDatabaseTweets(cls):

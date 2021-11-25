@@ -52,63 +52,16 @@ def stockAnalysis_json(request):
                 return JsonResponse(stockAnalysis_Json,safe=False,status=200)
         except:
             stockAnalysis = StockAnalysis()
-    
-        #twitterStock = TwitterStock()
+
         tweets = Tweet.getTweetsForStock(sa_stockTicker)
-        #tweets = analyseTweets(tweets)
 
         stockAnalysis.stockTicker = sa_stockTicker
         stockAnalysis.lastUpdated = datetime.utcnow()
         stockAnalysis.numTweets = len(tweets)
         
-        sentimentSum = 0
-        numPositive = 0
-        numNeutral = 0
-        numNegative = 0
+        sentimentScore, numPositive, numNeutral, numNegative, topLikedTweetId, topLikedTweet2Id, topRetweetedTweetId = Tweet.calcSentimentOfTweetSet(tweets)
 
-        topRetweetedTweetRetweets = 1
-        topRetweetedTweetId = 0
-
-        topLikedTweetLikes = 1
-        topLikedTweetId = 0
-
-        topLikedTweet2Likes = 1
-        topLikedTweet2Id = 0
-
-
-        for t in tweets:
-
-            if t.favorite_count > topLikedTweetLikes:
-                topLikedTweetLikes = t.favorite_count
-                topLikedTweetId = t.id
-            elif t.retweet_count > topRetweetedTweetRetweets:
-                topRetweetedTweetRetweets = t.retweet_count
-                topRetweetedTweetId = t.id
-            elif t.favorite_count > topLikedTweet2Likes:
-                topLikedTweet2Likes = t.favorite_count
-                topLikedTweet2Id = t.id
-            UPDATE HERE TO MOVE THE UPDATED ANALYSIS TO  Tweet.calcSentiment
-                        UPDATE HERE TO MOVE THE UPDATED ANALYSIS TO  Tweet.calcSentiment
-                                    UPDATE HERE TO MOVE THE UPDATED ANALYSIS TO  Tweet.calcSentiment
-            # Multiplying emoji sentiment weight by 8 so that 1 emoji = 8 characters in text
-            new_emojis_len = t.emojis_len * 8
-            textWeight = t.text_len / (t.text_len + new_emojis_len)
-            emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
-            sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
-            sentimentSum += sentiment
-            if sentiment < -0.12:
-                numNegative += 1
-            elif sentiment < 0.12:
-                numNeutral += 1
-            else:
-                numPositive += 1
-
-        # positiveSentiment and negativeSentiment are integers, not floats so for now multiplying them by 100 so it isn't saved as 0
-        if len(tweets) > 0:
-            stockAnalysis.sentimentScore = (sentimentSum / len(tweets) ) * 100
-        else:
-            stockAnalysis.sentimentScore = 0
-
+        stockAnalysis.sentimentScore = sentimentScore
         stockAnalysis.numPositiveTweets = numPositive
         stockAnalysis.numNeutralTweets = numNeutral
         stockAnalysis.numNegativeTweets = numNegative
@@ -216,7 +169,7 @@ def textSentimentSpeedTest(request):
         #textSentiment(tweet.text)
         tweet.calcSentiment()
 
-    end = time.time();
+    end = time.time()
 
     return HttpResponse(f"Total Time: {str(end - start)}")
  
@@ -231,10 +184,6 @@ def textSentimentSpeedTest(request):
 #     # if(isinstance(tweets[0], Tweet)):
 #     #     newList = [TwitterTweet(t) for t in tweets]
 #     #     tweets = newList
-        if sentiment < -0.12:
-        UPDATE THE NEG/POS NUM OF TWEETS TO USE -0.12 AND 0.12
-        elif sentiment < 0.12:
-
 #     sentimentSum = 0
 #     numPositive = 0
 #     numNeutral = 0
