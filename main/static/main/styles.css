@@ -76,3 +76,16 @@ content: attr(data-placeholder);
 pointer-events: none;
 opacity: 0.65;
 }
+
+
+/************** start eval-model-table ******************/
+#eval-model-table {
+  border-collapse: collapse;
+}
+
+#eval-model-table th, #eval-model-table td {
+  border: solid 1px black;
+  padding: 0.5em;
+}
+
+/************** end eval-model-table ******************/

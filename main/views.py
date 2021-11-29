@@ -110,7 +110,7 @@ def evaluateModel(request):
     endDate = request.GET.get('endDate', None)
 
     if ticker is None:
-        ticker = "APPL"
+        ticker = "AAPL"
 
     if startDate is None:
         startDate = date(2021, 11, 15)
@@ -143,9 +143,11 @@ def evaluateModel(request):
         open,close = twitterStock.getStockPrices(ticker, d)
         topen, tclose = twitterStock.getStockPrices(ticker, (d + timedelta(days=1)))
 
+        is_market_closed = True
+
         if(open == -1 or topen == -1):
             # market was closed on one of the days so ignore it
-            pass
+            is_market_closed = False
         else:
             results.append({
                 "date": d,
@@ -153,7 +155,9 @@ def evaluateModel(request):
                 "isBuy": sentimentScore >= 0,
                 "isCorrect": sentimentScore >= 0 and topen > open,
                 "today_open": open,
-                "tomorrow_open": topen
+                "tomorrow_open": topen,
+                "is_market_closed": is_market_closed,
+                "num_tweet_today": len(todaysTweets)
 
             })
 
@@ -172,56 +176,3 @@ def textSentimentSpeedTest(request):
     end = time.time()
 
     return HttpResponse(f"Total Time: {str(end - start)}")
- 
-
-
-
-
-# def calcSentimentOfTweetSet(tweets):
-    
-#     # Working towards tweets always being [models.Tweet]
-
-#     # if(isinstance(tweets[0], Tweet)):
-#     #     newList = [TwitterTweet(t) for t in tweets]
-#     #     tweets = newList
-#     sentimentSum = 0
-#     numPositive = 0
-#     numNeutral = 0
-#     numNegative = 0
-
-#     for t in tweets:
-        
-#         sentiment = t.calcSentiment()
-#         # Multiplying emoji sentiment weight by 8 so that 1 emoji = 8 characters in text
-#         # new_emojis_len = t.emojis_len * 8
-#         # textWeight = t.text_len / (t.text_len + new_emojis_len)
-#         # emojiWeight = (new_emojis_len / (t.text_len + new_emojis_len))
-#         # sentiment = (t.emoji_sentiment*2-1)*emojiWeight + (t.text_sentiment)*textWeight
-
-
-#         sentimentSum += sentiment
-#         if sentiment < -0.25:
-#             numNegative += 1
-#         elif sentiment < 0.25:
-#             numNeutral += 1
-#         else:
-#             numPositive += 1
-
-#     sentimentScore = sentimentSum / len(tweets) 
-
-#     return (sentimentScore, numPositive, numNeutral, numNegative)
-
-# def analyseTweets(tweets):
-#     #TODO: At the moment the tweet analysis happens in the twitter_stock.Tweet constructor
-#     #       So just returning a list of those objects will "analyse" the tweets.
-#     #       This is not a very good way of doing this.
-#     results = []
-
-#     for t in tweets:
-#         #id, created_at, text, ticker, is_retweet, retweet_count, author, symbols
-#         s = t.symbols.all()
-#         author = TwitterAuthor(t.author.id, t.author.name, t.author.followers_count)
-#         tt = TwitterTweet(t.id, t.created_at, t.text, t.ticker, t.is_retweet, t.retweet_count, author, t.symbols.all())
-#         results.append(tt)
-
-#     return results

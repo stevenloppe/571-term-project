@@ -6,14 +6,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="{% static 'main/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/styles.css' %}" />
+    
+    <link href="/static/main/styles.css" rel="stylesheet">
+
+    
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}"/>
     <title>{{ticker}} - Evaluation</title>
 </head>
 <body>
     <main>
         <h2 class="stock-name">Stock Ticker: ${{ticker}}</h2>
-        <table>
+        <table id="eval-model-table">
             <thead>
                 <tr>
                     <th>Date</th>
@@ -22,7 +26,8 @@
                     <th>Is Correct</th>
                     <th>Today Open</th>
                     <th>Tomorrow Open</th>
-
+                    <th>Is Market Closed</th>
+                    <th>Number of Tweets today</th>
                 </tr>
             </thead>
             <tbody>
@@ -34,6 +39,8 @@
                         <td>{{result.isCorrect}}</td>
                         <td>{{result.today_open | floatformat:2}}</td>
                         <td>{{result.tomorrow_open | floatformat:2}}</td>
+                        <td>{{result.is_market_closed}}</td>
+                        <td>{{result.num_tweet_today}}</td>
                     </tr>
                 {% endfor %}
             </tbody>
