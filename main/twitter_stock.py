@@ -4,6 +4,7 @@ import emoji
 import regex
 import pytz
 import yfinance as yf
+import stockquotes
 
 from main.EmojiTranslation import emojiSentiment
 from main.TextSentiment import textSentiment
@@ -108,26 +109,14 @@ class TwitterStock:
 
         self.twitter = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
 
-        
-
     def getStockPrices(self, ticker, start):
-        startDate = start - timedelta(days=2)
-        end = start + timedelta(days=2)
-        ticker = yf.Ticker(ticker)
-        hist = ticker.history(start=startDate, end=end)
-
-        startTest = start
-        endTest = start + timedelta(days=1)
-
-        histTest = ticker.history(start=startTest, end=endTest)
+                result = stockquotes.Stock(ticker)
         
-        for index, row in hist.iterrows():
-            if(index.year == start.year and index.month == start.month and index.day == start.day):
-                return row.Open, row.Close
+        for value in result.historical:
+            if(value["date"].date() == start):
+                return value["open"], value["close"]
 
-
-        # No market data, was probably closed
-        return -1, -1
+        return -1,-1
         
 
     # def fetchTweetsFromApi(self, ticker, filter_retweets=True, filter_links=True):
