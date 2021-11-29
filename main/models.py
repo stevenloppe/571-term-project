@@ -5,11 +5,16 @@ import emoji
 import regex
 from django.contrib import admin
 import time
-import stockquotes
+#import stockquotes
 
-from main import EmojiTranslation, TextSentiment
+
+from main import EmojiTranslation, TextSentiment, stockquote571
 from main import twitter_stock
 
+
+# This is a list of the 100 biggest stocks according to:
+# https://companiesmarketcap.com/
+BIG_TICKERS = ["MSFT","AAPL","2222.SR","GOOG","AMZN","TSLA","FB","NVDA","BRK-A","TSM","TCEHY","JPM","V","BABA","UNH","JNJ","WMT","LVMUY","005930.KS","HD","BAC","NSRGY","ASML","600519.SS","PG","RHHBY","MA","ADBE","DIS","CRM","NFLX","XOM","NKE","OR.PA","PFE","NVO","ORCL","LLY","TM","CMCSA","TMO","KO","CSCO","1398.HK","300750.SZ","PYPL","AVGO","ACN","RELIANCE.NS","PEP","ABT","COST","CVX","VZ","DHR","MPNGF","INTC","MRK","ABBV","3968.HK","WFC","SHOP","AZN","SE","MCD","QCOM","NVS","UPS","AMD","TXN","MS","RYDAF","SAP","T","TCS.NS","PRX.VI","INTU","LIN","HESAF","CICHY","NEE","MDT","LOW","HON","KYCCF","SONY","ACGBY","UNP","SCHW","RY","TMUS","VOW3.DE","CDI.PA","BLK","PM","002594.SZ","CBA.AX","PNGAY","AMAT","AXP"]
 
 
 # Create your models here.
@@ -59,6 +64,8 @@ class Tweet(models.Model):
     # A version number on each tweet to tell us which version of the analysis we have.
     # This global variable is what we will increment if we change our analysis.
     CURRENT_SENTIMENT_VERSION = 1
+
+
 
     # Extract Emojis
     # https://stackoverflow.com/a/49242754
@@ -228,11 +235,9 @@ class Tweet(models.Model):
 
     @classmethod
     def updateHistoricalDatabase(cls):
-        # This is a list of the 100 biggest stocks according to:
-        # https://companiesmarketcap.com/
-        big_tickers = ["MSFT","AAPL","2222.SR","GOOG","AMZN","TSLA","FB","NVDA","BRK-A","TSM","TCEHY","JPM","V","BABA","UNH","JNJ","WMT","LVMUY","005930.KS","HD","BAC","NSRGY","ASML","600519.SS","PG","RHHBY","MA","ADBE","DIS","CRM","NFLX","XOM","NKE","OR.PA","PFE","NVO","ORCL","LLY","TM","CMCSA","TMO","KO","CSCO","1398.HK","300750.SZ","PYPL","AVGO","ACN","RELIANCE.NS","PEP","ABT","COST","CVX","VZ","DHR","MPNGF","INTC","MRK","ABBV","3968.HK","WFC","SHOP","AZN","SE","MCD","QCOM","NVS","UPS","AMD","TXN","MS","RYDAF","SAP","T","TCS.NS","PRX.VI","INTU","LIN","HESAF","CICHY","NEE","MDT","LOW","HON","KYCCF","SONY","ACGBY","UNP","SCHW","RY","TMUS","VOW3.DE","CDI.PA","BLK","PM","002594.SZ","CBA.AX","PNGAY","AMAT","AXP"]
+        
 
-        for big_t in big_tickers:
+        for big_t in BIG_TICKERS:
             tweets = cls.fetchTweetsFromApi(big_t)
             cls.saveTweetsToDatabase(tweets, big_t)
             print("Saved: " + big_t)
@@ -311,23 +316,42 @@ class StockPrice(models.Model):
 
     @classmethod
     def updateHistoricalStockPrices(cls):
-        big_tickers = ["MSFT","AAPL","2222.SR","GOOG","AMZN","TSLA","FB","NVDA","BRK-A","TSM","TCEHY","JPM","V","BABA","UNH","JNJ","WMT","LVMUY","005930.KS","HD","BAC","NSRGY","ASML","600519.SS","PG","RHHBY","MA","ADBE","DIS","CRM","NFLX","XOM","NKE","OR.PA","PFE","NVO","ORCL","LLY","TM","CMCSA","TMO","KO","CSCO","1398.HK","300750.SZ","PYPL","AVGO","ACN","RELIANCE.NS","PEP","ABT","COST","CVX","VZ","DHR","MPNGF","INTC","MRK","ABBV","3968.HK","WFC","SHOP","AZN","SE","MCD","QCOM","NVS","UPS","AMD","TXN","MS","RYDAF","SAP","T","TCS.NS","PRX.VI","INTU","LIN","HESAF","CICHY","NEE","MDT","LOW","HON","KYCCF","SONY","ACGBY","UNP","SCHW","RY","TMUS","VOW3.DE","CDI.PA","BLK","PM","002594.SZ","CBA.AX","PNGAY","AMAT","AXP"]
+        
 
-        for ticker in big_tickers:
-            historical = stockquotes.Stock(ticker).historical
-            for entry in historical:
-                
-                does_exist = StockPrice.objects.filter(ticker = ticker).filter(date = entry["date"]).exists()
+        for ticker in BIG_TICKERS:
+            historical = stockquote571.Stock(ticker).historical
 
-                if(not does_exist):
+            first_date = min(historical, key=lambda e: e["date"])["date"]
+            last_date = max(historical, key=lambda e: e["date"])["date"]
+            days = (last_date - first_date).days + 1 
+
+
+            dates_to_store = [first_date + timedelta(days=x) for x in range(days)]
+
+            for d in dates_to_store:
+
+                # Does this historical data have an entry for this date?
+                if(any([e["date"] == d for e in historical])):
+                    entry = list(filter(lambda e: e["date"] == d, historical))[0]
+                    
+                    does_exist = StockPrice.objects.filter(ticker = ticker).filter(date = entry["date"]).exists()
+
+                    if(not does_exist):
+                        stockPrice = StockPrice()
+                        stockPrice.ticker = ticker
+                        stockPrice.date   = entry["date"]
+                        stockPrice.open   = entry["open"]
+                        stockPrice.close  = entry["close"]
+                        stockPrice.save()
+                else:
+                    # The historical data has a gap for this day which means the market wasn't open so we will store -1,-1 instead
                     stockPrice = StockPrice()
                     stockPrice.ticker = ticker
-                    stockPrice.date   = entry["date"]
-                    stockPrice.open   = entry["open"]
-                    stockPrice.close  = entry["close"]
+                    stockPrice.date   = d
+                    stockPrice.open   = -1
+                    stockPrice.close  = -1
                     stockPrice.save()
 
-                x = 1
 
 
     @classmethod
