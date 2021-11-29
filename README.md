@@ -22,6 +22,9 @@ Packages:
 `pip install regex`
 `pip install twitter`
 `pip install yfinance`
+`pip install beautifulsoup4`
+`pip install stockquotes`
+
 
 
 # Setting up database for storing tweets from twitter
