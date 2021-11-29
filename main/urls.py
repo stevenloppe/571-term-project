@@ -12,6 +12,8 @@ urlpatterns = [
     path('stockAnalysis_json', views.stockAnalysis_json, name='stockAnalysis_json_view'),
     path('textSentimentSpeedTest', views.textSentimentSpeedTest, name='textSentimentSpeedTest'),
     path('updateSentimentForStoredTweets', views.updateSentimentForStoredTweets, name='updateSentimentForStoredTweets'),
+    path('updateHistoricalStockPrices', views.updateHistoricalStockPrices, name='updateHistoricalStockPrices'),
+    
     
     path('<str:sa_stockTicker>', views.stockdetails, name='stockdetails'),
     path('<str:sa_stockTicker>/', views.stockdetails, name='stockdetails'),

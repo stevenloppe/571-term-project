@@ -8,7 +8,7 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
 
 from main.TextSentiment import textSentiment
-from .models import StockAnalysis, Tweet
+from .models import StockAnalysis, Tweet, StockPrice
 
 from twitter import *
 from main.twitter_stock import TwitterStock
@@ -102,6 +102,11 @@ def updateSentimentForStoredTweets(request):
 
     return HttpResponse("Finished")
     
+def updateHistoricalStockPrices(request):
+    StockPrice.updateHistoricalStockPrices()
+
+    return HttpResponse("Finished")
+    
 
 
 def evaluateModel(request):
@@ -139,15 +144,14 @@ def evaluateModel(request):
         else:   
             sentimentScore, _, _, _, _, _, _ = Tweet.calcSentimentOfTweetSet(todaysTweets)
         
-        twitterStock = TwitterStock();
-        open,close = twitterStock.getStockPrices(ticker, d)
-        topen, tclose = twitterStock.getStockPrices(ticker, (d + timedelta(days=1)))
+        open,close = StockPrice.getStockPrices(ticker, d)
+        topen, tclose = StockPrice.getStockPrices(ticker, (d + timedelta(days=1)))
 
-        is_market_closed = True
+        is_market_closed = False
 
         if(open == -1 or topen == -1):
             # market was closed on one of the days so ignore it
-            is_market_closed = False
+            is_market_closed = True
         else:
             results.append({
                 "date": d,

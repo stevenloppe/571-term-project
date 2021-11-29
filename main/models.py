@@ -5,6 +5,7 @@ import emoji
 import regex
 from django.contrib import admin
 import time
+import stockquotes
 
 from main import EmojiTranslation, TextSentiment
 from main import twitter_stock
@@ -307,3 +308,50 @@ class StockPrice(models.Model):
     date = models.DateField()
     open = models.FloatField()
     close = models.FloatField()
+
+    @classmethod
+    def updateHistoricalStockPrices(cls):
+        big_tickers = ["MSFT","AAPL","2222.SR","GOOG","AMZN","TSLA","FB","NVDA","BRK-A","TSM","TCEHY","JPM","V","BABA","UNH","JNJ","WMT","LVMUY","005930.KS","HD","BAC","NSRGY","ASML","600519.SS","PG","RHHBY","MA","ADBE","DIS","CRM","NFLX","XOM","NKE","OR.PA","PFE","NVO","ORCL","LLY","TM","CMCSA","TMO","KO","CSCO","1398.HK","300750.SZ","PYPL","AVGO","ACN","RELIANCE.NS","PEP","ABT","COST","CVX","VZ","DHR","MPNGF","INTC","MRK","ABBV","3968.HK","WFC","SHOP","AZN","SE","MCD","QCOM","NVS","UPS","AMD","TXN","MS","RYDAF","SAP","T","TCS.NS","PRX.VI","INTU","LIN","HESAF","CICHY","NEE","MDT","LOW","HON","KYCCF","SONY","ACGBY","UNP","SCHW","RY","TMUS","VOW3.DE","CDI.PA","BLK","PM","002594.SZ","CBA.AX","PNGAY","AMAT","AXP"]
+
+        for ticker in big_tickers:
+            historical = stockquotes.Stock(ticker).historical
+            for entry in historical:
+                
+                does_exist = StockPrice.objects.filter(ticker = ticker).filter(date = entry["date"]).exists()
+
+                if(not does_exist):
+                    stockPrice = StockPrice()
+                    stockPrice.ticker = ticker
+                    stockPrice.date   = entry["date"]
+                    stockPrice.open   = entry["open"]
+                    stockPrice.close  = entry["close"]
+                    stockPrice.save()
+
+                x = 1
+
+
+    @classmethod
+    def getStockPrices(cls, ticker, start):
+        stockPrice = StockPrice.objects.filter(ticker = ticker).filter(date = start).first()
+
+        x = 1
+
+        if(stockPrice is not None):
+            # If we have the stock price already saved, return it
+            return stockPrice.open, stockPrice.close
+
+        result = stockquotes.Stock(ticker)
+        
+        for value in result.historical:
+            if(value["date"].date() == start):
+                
+                # If we get here then we didn't have the stock price saved so lets save it for next time.
+                stockPrice = StockPrice()
+                stockPrice.ticker = ticker
+                stockPrice.date = start
+                stockPrice.open = value["open"]
+                stockPrice.close = value["close"]
+                stockPrice.save();
+                return value["open"], value["close"]
+
+        return -1,-1

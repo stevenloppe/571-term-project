@@ -11,6 +11,8 @@ from main.TextSentiment import textSentiment
 
 from django.db.models import Max
 
+
+
 class TwitterStock:
     
     def __init__(self):
@@ -22,11 +24,7 @@ class TwitterStock:
 
         self.twitter = Twitter(auth=OAuth(ACCESS_TOKEN, ACCESS_TOKEN_SECRET, API_KEY, API_KEY_SECRET))
 
-    def getStockPrices(self, ticker, start):
-        result = stockquotes.Stock(ticker)
-        
-        for value in result.historical:
-            if(value["date"].date() == start):
-                return value["open"], value["close"]
 
-        return -1,-1
+
+
+        
