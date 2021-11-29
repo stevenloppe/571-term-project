@@ -39,18 +39,6 @@ class Author(models.Model):
     name = models.CharField(max_length=1024, default="")
     followers_count = models.IntegerField(default=0)
 
-    # # https://stackoverflow.com/a/843740
-
-    # # This is a class method that takes the result of the twitter api 
-    # # and extracts the relevant values and returns an Author model
-    # @classmethod
-    # def getOrCreate(cls, status):
-    #     return cls(
-    #         id=status["user"]["id"], 
-    #         name = status["user"]["name"], 
-    #         followers_count = status["user"]["followers_count"]
-    #     )
-
 
 class Tweet(models.Model):
     id = models.IntegerField(primary_key=True)
@@ -113,26 +101,6 @@ class Tweet(models.Model):
 
 
 ###  Class Methods ###
-
-    # @classmethod
-    # def create(cls, status, author, ticker):
-    #     symbols = [symbol["text"] for symbol in status["entities"]["symbols"]]
-
-    #     created_at = datetime.fromisoformat(datetime.strftime(datetime.strptime(symbol["created_at"],'%a %b %d %H:%M:%S +0000 %Y'), '%Y-%m-%d %H:%M:%S'))
-    #     created_at = datetime(year=created_at.year, month=created_at.month, day=created_at.day, hour=created_at.hour, minute=created_at.minute, second=created_at.second, microsecond=created_at.microsecond, tzinfo=timezone.utc)
-
-    #     return cls(
-    #         id = status["id"], 
-    #         text = status["full_text"], 
-    #         created_at = created_at, 
-    #         ticker = ticker, 
-    #         is_retweet = "retweeted_status" in status, 
-    #         retweet_count = status["retweet_count"], 
-    #         fetched_at = datetime.now(timezone.utc), 
-    #         author = author, 
-    #         sentiment = -2, 
-    #         sentiment_version = 0
-    #    )
 
     @classmethod
     def fetchTweetsFromApi(cls, ticker, filter_retweets=True, filter_links=True):
@@ -334,3 +302,8 @@ class TweetSymbols(models.Model):
     symbol = models.CharField(max_length=255)
 
 
+class StockPrice(models.Model):
+    ticker = models.CharField(max_length=255)
+    date = models.DateField()
+    open = models.FloatField()
+    close = models.FloatField()
