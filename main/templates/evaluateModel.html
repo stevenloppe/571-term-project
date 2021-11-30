@@ -25,7 +25,7 @@
                     <th>Sentiment</th>
                     <th>Is Correct</th>
                     <th>Today Open</th>
-                    <th>Tomorrow Open</th>
+                    <th>Today Close</th>
                     <th>Is Market Closed</th>
                     <th>Number of Tweets today</th>
                 </tr>
@@ -38,7 +38,7 @@
                         <td>{{result.sentiment}}</td>
                         <td>{{result.isCorrect}}</td>
                         <td>{{result.today_open | floatformat:2}}</td>
-                        <td>{{result.tomorrow_open | floatformat:2}}</td>
+                        <td>{{result.today_close | floatformat:2}}</td>
                         <td>{{result.is_market_closed}}</td>
                         <td>{{result.num_tweet_today}}</td>
                     </tr>

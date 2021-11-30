@@ -106,9 +106,7 @@ class Tweet(models.Model):
         self.sentiment = self.calcSentiment()
         self.sentiment_version = Tweet.CURRENT_SENTIMENT_VERSION
         self.save()
-
-
-###  Class Methods ###
+#   Class Methods #
 
     @classmethod
     def fetchTweetsFromApi(cls, ticker, filter_retweets=True, filter_links=True):

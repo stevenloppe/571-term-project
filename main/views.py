@@ -6,6 +6,7 @@ from django.views import generic
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404, render
+from main.AnalysisEvaluation import AnalysisList
 
 from main.TextSentiment import textSentiment
 from .models import StockAnalysis, Tweet, StockPrice
@@ -126,42 +127,21 @@ def evaluateModel(request):
         endDate = startDate + timedelta(days = 7)
     else:
         endDate = datetime.strptime(endDate, "%Y-%m-%d").date()
-    
-
-    tweets = Tweet.objects.filter(ticker = ticker).filter(created_at__range=[startDate, endDate])
-
-    days = (endDate - startDate).days
 
 
-    dates = [startDate + timedelta(days=d) for d in range(days)]
+    results = []    
+    analysisList = AnalysisList([ticker], startDate, endDate)
 
-    results = []
-
-    for d in dates:
-        todaysTweets = [t for t in tweets if t.created_at.date() == d]
-        if(len(todaysTweets) <= 0):
-            sentimentScore = 0
-        else:   
-            sentimentScore, _, _, _, _, _, _ = Tweet.calcSentimentOfTweetSet(todaysTweets)
-        
-        open,close = StockPrice.getStockPrices(ticker, d)
-        topen, tclose = StockPrice.getStockPrices(ticker, (d + timedelta(days=1)))
-
-        is_market_closed = False
-
-        if(open == -1 or topen == -1):
-            # market was closed on one of the days so ignore it
-            is_market_closed = True
-        
+    for a in analysisList:
         results.append({
-            "date": d,
-            "sentiment": sentimentScore,
-            "isBuy": sentimentScore >= 0,
-            "isCorrect": sentimentScore >= 0 and topen > open,
-            "today_open": open,
-            "tomorrow_open": topen,
-            "is_market_closed": is_market_closed,
-            "num_tweet_today": len(todaysTweets)
+            "date": a.test_date,
+            "sentiment": a.sentiment,
+            "isBuy": a.is_buy(),
+            "isCorrect": a.is_correct(),
+            "today_open": a.open,
+            "today_close": a.close,
+            "is_market_closed": a.is_market_closed(),
+            "num_tweet_today": len(a.tweets)
 
         })
 
