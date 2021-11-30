@@ -152,18 +152,18 @@ def evaluateModel(request):
         if(open == -1 or topen == -1):
             # market was closed on one of the days so ignore it
             is_market_closed = True
-        else:
-            results.append({
-                "date": d,
-                "sentiment": sentimentScore,
-                "isBuy": sentimentScore >= 0,
-                "isCorrect": sentimentScore >= 0 and topen > open,
-                "today_open": open,
-                "tomorrow_open": topen,
-                "is_market_closed": is_market_closed,
-                "num_tweet_today": len(todaysTweets)
+        
+        results.append({
+            "date": d,
+            "sentiment": sentimentScore,
+            "isBuy": sentimentScore >= 0,
+            "isCorrect": sentimentScore >= 0 and topen > open,
+            "today_open": open,
+            "tomorrow_open": topen,
+            "is_market_closed": is_market_closed,
+            "num_tweet_today": len(todaysTweets)
 
-            })
+        })
 
     return render(request, 'evaluateModel.html', {'results' : results, 'ticker': ticker})
 
