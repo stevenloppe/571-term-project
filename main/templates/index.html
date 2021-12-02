@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="{% static 'main/styles.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'main/index.css' %}">
     <link rel="stylesheet" type="text/css" href="{% static 'main/css/bootstrap.css' %}"/>
     <!-- https://getbootstrap.com/docs/5.1/ -->
     <title>Stock Sentiment Tracker</title>
@@ -22,8 +23,7 @@
             </a>
             </div>
         </nav>
-  
-        <section class="hero-section">
+        <div class="hero-section">
             <h1 class="website-name">Stock Sentiment Tracker</h1>
             <form type="get" action=".">
                 <div class="searchbar">
@@ -38,6 +38,62 @@
                     </div>
                 </div>    
             </form>
-        </section>
+            <div class="recently-searched-table">
+              <h3>Recently Searched Sentiments</h3>
+              <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col">Stock Ticker</th>
+                    <th scope="col">Sentiment</th>
+                    <th scope="col">Last Updated</th>
+                  </tr>
+                </thead>                
+                <tbody>
+                  {% for stock in analyses %}
+                  <!-- <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li> -->
+                    <tr>
+                      <th scope="row">{{stock.stockTicker}}</th>
+                      <td>{{stock.sentimentScore}}</td>
+                      <td>{{stock.lastUpdated}} UTC</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>  
+            </div>          
+          </div>
+        </div>
+        <div class="content">
+          <br><hr><br>
+          <div class="about">
+            <h2>ABOUT</h2>
+            <p>The Stock Sentiment Tracker was developed to answer the question "What does the general public think of this stock?".
+              To solve this, we search through the stock tickers on twitter using the twitter API and calculate the sentiment of each tweet by matching sentiment to a lexicon.
+              This information is then averaged out and displayed to the user.
+            </p>
+            <p>
+              To use this website just simply type the name of the stock ticker you wish to know the sentiment of in the search bar.
+              The process of searching through tweets and calculating each of their sentiments make take a few minutes on the popular stocks.
+            </p>
+            <p>
+              This website was developed by Jan Jelinek, Steven Loppe, and Gevorg Manukyan for the CPSC 571 term project.
+            </p>
+          </div>  
+        </div>
+
+        <div class="container">
+          <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <div class="col-md-4 d-flex align-items-center">
+              <a href="/" class="mb-3 me-2 mb-md-0 text-muted text-decoration-none lh-1">
+                <svg class="bi" width="30" height="24"><use xlink:href="#bootstrap"></use></svg>
+              </a>
+              <span class="text-muted">CPSC 571 G16</span>
+            </div>
+          
+            <ul class="nav col-md-4 justify-content-end list-unstyled d-flex">
+              <li class="ms-3"><a class="text-muted" href="https://twitter.com/cpsc571project"><img src="{% static 'main/svg/twitter.svg' %}" class="bi" width="24" height="24"></img><h7></h7></a></li>
+              <li class="ms-3"><a class="text-muted" href="https://github.com/stevenloppe/571-term-project"><img src="{% static 'main/svg/github.svg' %}" class="bi" width="24" height="24"></img><h7></h7></a></li>
+            </ul>
+          </footer>
+        </div>
     </main>
 </body>

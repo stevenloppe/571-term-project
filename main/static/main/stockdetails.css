@@ -1,0 +1,101 @@
+.invisible {
+    display: none;
+}
+
+.spinnerbox {
+    margin: auto;
+    width: 50%;
+    padding: 20px;
+    padding-top: 3em;
+}
+
+.spinner-border {
+    width: 4rem; 
+    height: 4rem; 
+    margin-top: 30vh;
+}
+
+.databox {
+    padding-top: 4vh;
+}
+
+.sentimentRating {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.sentimentRating-content {
+    width: 400px;
+}
+  
+.sentimentRating-content > .numbers {
+    display: flex;
+    justify-content: space-between;
+}
+  
+.pointer-arrow {
+    display: flex;
+    justify-content: center;
+}
+
+.databox > h1 {
+    font-size: 3em;
+}
+
+@media only screen and (min-width: 100px) {
+    .content {
+        width: 90%;
+    }
+
+    .content > h1 {
+        font-size: 4em;
+    }
+
+    .sentimentRating > h5 {
+        display: none;
+    }
+
+    .sentimentRating-content {
+        padding-left: 0;
+    }
+}
+
+@media only screen and (min-width: 540px) {
+    .sentimentRating-content {
+        padding-left: 2em;
+    }
+
+}
+
+@media only screen and (min-width: 900px) {
+    .sentimentRating > h5 {
+        display: block;
+    }
+    .sentimentRating-content {
+        padding-left: 0;
+    }
+}
+
+@media only screen and (min-width: 1100px) {
+    .content {
+        width: 80%;
+    }
+}
+
+@media only screen and (min-width: 1350px) {
+    .content {
+        width: 65%;
+    }
+}
+
+@media only screen and (min-width: 1650px) {
+    .content {
+        width: 50%;
+    }
+    .databox > h1 {
+        font-size: 5em;
+    }    
+}

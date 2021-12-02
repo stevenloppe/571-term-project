@@ -1,0 +1,83 @@
+.hero-section {
+    justify-content: center;
+    align-items: center;
+    margin: auto;
+    width: 90%;
+    height: 100%;
+    text-align: center;
+}
+
+.hero-section > h1 {
+    margin-top: 12vh;
+    font-size: 2.2em;
+    padding-bottom: 0.4em;
+}
+
+.searchbar {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+    
+.addDollarSymbol {
+    position: relative;
+}
+    
+.addDollarSymbol::after {
+    position: absolute;
+    left: 4px;
+    top: 7px;
+    content: attr(data-placeholder);
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+.recently-searched-table {
+    padding-top: 12vh;
+}  
+
+.about {
+    padding-bottom: 10%;
+}
+
+.about > h2 {
+    font-size: 2.2em;
+}
+  
+
+@media only screen and (min-width: 650px) {
+    .hero-section > h1 {
+        font-size: 3em;
+    }   
+    .about > h2 {
+        font-size: 3em;
+    }   
+}
+
+@media only screen and (min-width: 900px) {
+    .hero-section {
+        width: 80%;
+    }
+
+    .hero-section > h1 {
+        font-size: 4em;
+    }   
+    .about > h2 {
+        font-size: 3em;
+    }
+}
+
+@media only screen and (min-width: 1200px) {
+    .hero-section {
+        width: 65%;
+    }
+    .content {
+        width: 50%;
+    }
+}
+
+@media only screen and (min-width: 1500px) {
+    .hero-section {
+        width: 50%;
+    }
+}

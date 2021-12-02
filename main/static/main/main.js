@@ -1,5 +1,6 @@
 const spinnerBox = document.getElementById('spinner-box');
 const dataBox = document.getElementById('data-box');
+const footer = document.getElementById('stockdetails-footer');
 
 var ticker = document.getElementById("tickerjs").value;
 
@@ -32,6 +33,7 @@ $.ajax({
         console.log('success');
         spinnerBox.classList.add('invisible');
         dataBox.classList.remove('invisible');
+        footer.classList.remove('invisible');
 
         const stockAnalysis = JSON.parse(response);
         document.getElementById("stockTicker").innerHTML = stockAnalysis.stockTicker;
@@ -65,11 +67,9 @@ $.ajax({
         ratingPointer.setAttribute('style','padding-left:'+pointerOffset+'px; margin-bottom: -0.8em;');
         //const ratingText = document.getElementById('sentimentScore');
         //ratingText.setAttribute('style','padding-left:'+Number(pointerOffset-16)+'px;');
-        console.log('pointerOffset',pointerOffset);
 
         // Update bar lengths to match their ratios        
         if (stockAnalysis.numTweets > 1) {
-            console.log('Attempting to update bar ratios');
 
             const posTweetsBar = document.getElementById('numPositiveTweets-bar');
             const posBarRatio = parseInt(stockAnalysis.numPositiveTweets)/parseInt(stockAnalysis.numTweets)*100;
@@ -88,6 +88,7 @@ $.ajax({
         }
 
         const relevantTweets = document.getElementById('relevant-tweets');
+        console.log("topLikedTweetId", stockAnalysis.topLikedTweetId);
         if (stockAnalysis.topLikedTweetId > 0) {
             relevantTweets.classList.remove('invisible');
             twttr.widgets.createTweet(
@@ -98,7 +99,9 @@ $.ajax({
                 }
             );    
         }
+        console.log("topRetweetedTweetId", stockAnalysis.topRetweetedTweetId);
         if (stockAnalysis.topRetweetedTweetId > 0) {
+            relevantTweets.classList.remove('invisible');
             twttr.widgets.createTweet(
                 stockAnalysis.topRetweetedTweetId,
                 document.getElementById("featured-tweet-2"),
@@ -107,7 +110,9 @@ $.ajax({
                 }
             );    
         }
+        console.log("topLikedTweet2Id", stockAnalysis.topLikedTweet2Id);
         if (stockAnalysis.topLikedTweet2Id > 0) {
+            relevantTweets.classList.remove('invisible');
             twttr.widgets.createTweet(
                 stockAnalysis.topLikedTweet2Id,
                 document.getElementById("featured-tweet-3"),
@@ -116,8 +121,6 @@ $.ajax({
                 }
             );    
         }
-
-        
 
     },
     error: function(error) {

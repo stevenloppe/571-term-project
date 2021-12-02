@@ -37,7 +37,7 @@ class StockAnalysis(models.Model):
         return self.stockTicker
 
     def is_outdated(self):
-        return self.lastUpdated <= timezone.now() - datetime.timedelta(minutes=15)
+        return self.lastUpdated <= timezone.now() - timedelta(minutes=15)
 
 
 class Author(models.Model):
@@ -206,6 +206,7 @@ class Tweet(models.Model):
             tweet.created_at = created_at
             tweet.ticker = ticker
             tweet.is_retweet = "retweeted_status" in s
+            tweet.favorite_count = s["favorite_count"]
             tweet.retweet_count = s["retweet_count"]
             tweet.fetched_at = datetime.now(timezone.utc)
             tweet.sentiment = -2 # Do not calculate sentiment now. It is slow so we will do it later in batch

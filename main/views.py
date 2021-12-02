@@ -30,7 +30,12 @@ def index(request):
         if type(searchquery) == str:
             return redirect('/'+searchquery)
 
-    return render(request,"index.html")
+    analyses = StockAnalysis.objects.order_by('-lastUpdated')[:5]
+    # asSeRtiOnErRoR: nEgaTivE iNdexInG iS nOt SuPpRorTeD :D
+    #analyses = orderedStocks[len(orderedStocks)-5:]
+
+
+    return render(request,"index.html", {'analyses' : analyses})
 
 
 def stockdetails(request, sa_stockTicker):
