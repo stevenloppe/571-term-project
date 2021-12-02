@@ -45,6 +45,7 @@
                   <tr>
                     <th scope="col">Stock Ticker</th>
                     <th scope="col">Sentiment</th>
+                    <th scope="col">Number of Tweets</th>
                     <th scope="col">Last Updated</th>
                   </tr>
                 </thead>                
@@ -54,6 +55,7 @@
                     <tr>
                       <th scope="row">{{stock.stockTicker}}</th>
                       <td>{{stock.sentimentScore}}</td>
+                      <td>{{stock.numTweets}}</td>
                       <td>{{stock.lastUpdated}} UTC</td>
                     </tr>
                   {% endfor %}
