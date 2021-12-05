@@ -363,7 +363,7 @@ class StockPrice(models.Model):
             # If we have the stock price already saved, return it
             return stockPrice.open, stockPrice.close
 
-        result = stockquotes.Stock(ticker)
+        result = stockquote571.Stock(ticker)
         
         for value in result.historical:
             if(value["date"].date() == start):

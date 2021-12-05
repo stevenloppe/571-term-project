@@ -9,7 +9,7 @@ from django.shortcuts import get_object_or_404, render
 from main.AnalysisEvaluation import AnalysisList
 
 from main.TextSentiment import textSentiment
-from .models import StockAnalysis, Tweet, StockPrice
+from .models import BIG_TICKERS, StockAnalysis, Tweet, StockPrice
 
 from twitter import *
 from main.twitter_stock import TwitterStock
@@ -134,6 +134,12 @@ def evaluateModel(request):
         endDate = datetime.strptime(endDate, "%Y-%m-%d").date()
 
 
+    # Calculate model for entire set of valid data
+    # al = AnalysisList(BIG_TICKERS, date(2021,11,1), date(2021,11,29))
+    # c = al.num_correct_analyses()
+    # v = al.num_valid_analyses()
+    # p = 100.0 * c / v
+
     results = []    
     analysisList = AnalysisList([ticker], startDate, endDate)
 
@@ -150,7 +156,15 @@ def evaluateModel(request):
 
         })
 
-    return render(request, 'evaluateModel.html', {'results' : results, 'ticker': ticker})
+    context = {
+        'results' : results, 
+        'ticker': ticker,
+        'num_correct': analysisList.num_correct_analyses(),
+        'num_valid': analysisList.num_valid_analyses(),
+        'correct_percentage': 100.0 * analysisList.num_correct_analyses()/analysisList.num_valid_analyses()
+    }
+
+    return render(request, 'evaluateModel.html', context)
 
 def textSentimentSpeedTest(request):
     tweets = Tweet.objects.filter(ticker = "TSLA").order_by("id")[:10]

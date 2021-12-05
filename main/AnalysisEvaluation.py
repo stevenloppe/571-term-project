@@ -3,14 +3,20 @@ from .models import Tweet, StockPrice
 from datetime import timedelta
 
 class AnalysisResult:
-    
+    # In memory cache because its much faster
+    allTweets = list(Tweet.objects.all())
+
+    @classmethod
+    def getTweetsFor(cls, ticker, test_date):
+        tweets = [t for t in cls.allTweets if t.ticker == ticker and t.created_at.date() == test_date]
+        return tweets
+
     def __init__(self, ticker, test_date):
         self.ticker = ticker
         self.test_date = test_date
 
-        next_date = self.test_date + timedelta(days=1)
-        self.tweets = Tweet.objects.filter(ticker = ticker).filter(created_at__date=self.test_date)
-        # DOES TWEETS NEED TO BE CONVERTED TO A LIST?
+        #self.tweets = Tweet.objects.filter(ticker = ticker).filter(created_at__date=self.test_date)
+        self.tweets = AnalysisResult.getTweetsFor(self.ticker, self.test_date)
         self.sentiment, _, _, _, _, _, _ = Tweet.calcSentimentOfTweetSet(self.tweets)
         self.open, self.close = StockPrice.getStockPrices(ticker, self.test_date)
         
@@ -51,6 +57,9 @@ class AnalysisList:
         for ticker in tickers:
             for d in dates:
                 self.analysis_list.append(AnalysisResult(ticker, d))
+                #print(d)
+            print(ticker)
+                
 
     def __iter__(self):
         return iter(self.analysis_list)
