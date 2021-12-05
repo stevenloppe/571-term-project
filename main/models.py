@@ -293,12 +293,13 @@ class Tweet(models.Model):
         while(len(tweets) > 0):
             for tweet in tweets:
                 tweet.calcAndSaveSentiment()
+            # Operate in batches of 100 so if/when the request is cancelled we don't lose all progress
             tweets = Tweet.objects.filter(sentiment_version__lt=Tweet.CURRENT_SENTIMENT_VERSION)[:100]
 
             count = Tweet.objects.filter(sentiment_version=Tweet.CURRENT_SENTIMENT_VERSION).count()
             total_count = Tweet.objects.count()
             print(f"Tweets with sentiment version {Tweet.CURRENT_SENTIMENT_VERSION}: {count}/{total_count}")
-            time.sleep (10) # To give my CPU a rest
+            
     
 
 
