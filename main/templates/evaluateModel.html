@@ -16,11 +16,12 @@
 </head>
 <body>
     <main>
-        <h2 class="stock-name">Stock Ticker: ${{ticker}}</h2>
+        <h2 class="stock-name">Stock Ticker: ${{tickers}}</h2>
         <h3>Ratio of correct predictions: {{num_correct}}/{{num_valid}}  -  {{correct_percentage}}%</h3>
         <table id="eval-model-table">
             <thead>
                 <tr>
+                    <th>Ticker</th>
                     <th>Date</th>
                     <th>Buy/Sell</th>
                     <th>Sentiment</th>
@@ -34,6 +35,7 @@
             <tbody>
                 {% for result in results %}
                     <tr>
+                        <td>{{result.ticker}}</td>
                         <td>{{result.date}}</td>
                         <td>{{result.isBuy}}</td>
                         <td>{{result.sentiment}}</td>

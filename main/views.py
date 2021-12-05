@@ -116,12 +116,21 @@ def updateHistoricalStockPrices(request):
 
 
 def evaluateModel(request):
-    ticker = request.GET.get('ticker', None)
+    tickers = request.GET.get('tickers', None)
     startDate = request.GET.get('startDate', None)
     endDate = request.GET.get('endDate', None)
 
-    if ticker is None:
-        ticker = "AAPL"
+    if tickers is None:
+        tickers = ["AAPL"]
+    else:
+
+        if(tickers=="__ALL__"):
+            # If a magic value is sent in then we evaluate ALL of the tickers in our system
+            tickers = BIG_TICKERS
+        else:
+            # split comma separated string into list and trim off whitespace
+            tickers = [ticker.strip() for ticker in tickers.split(',')]
+        
 
     if startDate is None:
         startDate = date(2021, 11, 15)
@@ -141,10 +150,11 @@ def evaluateModel(request):
     # p = 100.0 * c / v
 
     results = []    
-    analysisList = AnalysisList([ticker], startDate, endDate)
+    analysisList = AnalysisList(tickers, startDate, endDate)
 
     for a in analysisList:
         results.append({
+            "ticker": a.ticker,
             "date": a.test_date,
             "sentiment": a.sentiment,
             "isBuy": a.is_buy(),
@@ -158,7 +168,7 @@ def evaluateModel(request):
 
     context = {
         'results' : results, 
-        'ticker': ticker,
+        'tickers': tickers,
         'num_correct': analysisList.num_correct_analyses(),
         'num_valid': analysisList.num_valid_analyses(),
         'correct_percentage': 100.0 * analysisList.num_correct_analyses()/analysisList.num_valid_analyses()
