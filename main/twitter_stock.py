@@ -1,10 +1,5 @@
 from twitter import *
-from datetime import date, datetime, timedelta, timezone
-import emoji
-import regex
-import pytz
-import yfinance as yf
-import stockquotes
+
 
 from main.EmojiTranslation import emojiSentiment
 from main.TextSentiment import textSentiment
