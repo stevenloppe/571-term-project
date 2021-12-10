@@ -68,23 +68,23 @@ Example full query: /evaluateModel?tickers=\_\_ALL\_\_&startDate=2021-11-15&endD
 **Warning**: Increasing the date range to test against will make the response take longer! The console will output the stock ticker currently being analysed so you can get an idea of how fast it is moving. Executing the above example query takes about 5 minutes to respond on my machine.
 
 
-### Batch urls
+## Batch urls
 
 Since our pages are already relatively slow we preprocess as much data as we can into our database, these preprocessing operations can be accessed via the following urls:
 
-#### update historical database (/updateHistoricalDatabase)
+### update historical database (/updateHistoricalDatabase)
 
 This url will hit the twitter api and retrieve any tweets that we don't already have. We are rate-limited to 180 requests per 15 minutes so it is likely this url will hit that limit and need to be re-run later.
 
-#### Update sentiment for stored tweets (/updateSentimentForStoredTweets)
+### Update sentiment for stored tweets (/updateSentimentForStoredTweets)
 
 This url will go through our database of tweets and determine the sentiment for any tweets that haven't already been determined. This operation is slow and CPU intensive! It is recommended that you run this after updating the historical database to give the api rate limit time to reset (then run them both again after)
 
-#### Update historical stock prices (/updateHistoricalStockPrices)
+### Update historical stock prices (/updateHistoricalStockPrices)
 
 This url will update our database of historical stock prices, it doesn't take as long as the others and doesn't have any rate limitations. 
 
-#### Recommended execution order:
+### Recommended execution order:
 
 1. /updateHistoricalDatabase
 2. /updateSentimentForStoredTweets
