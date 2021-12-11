@@ -90,7 +90,11 @@ class Tweet(models.Model):
         text_without_emojis = emoji.replace_emoji(self.text, "")
         emojis_len = len(emojis)
         text_len = len(text_without_emojis)
-        emoji_sentiment = EmojiTranslation.emojiSentiment(emojis)
+        if (emojis_len > 0):
+            emoji_sentiment = EmojiTranslation.emojiSentiment(emojis)
+        else:
+            emoji_sentiment = 0.5
+
         text_sentiment = TextSentiment.textSentiment(text_without_emojis)
         
         # Multiplying emoji sentiment weight by 8 so that 1 emoji = 8 characters in text
@@ -272,11 +276,8 @@ class Tweet(models.Model):
                 topLikedTweet2Likes = t.favorite_count
                 topLikedTweet2Id = t.id
             sentiment = t.getSentimentAndUpdate()
-            # sentiment = getSentiment()
-
             # SentimentScore = Sum(individualSentimentScores * fraction of retweets)
             sentimentSum += sentiment * ((t.retweet_count + 1)/totalRetweets)
-            # t.updateSentiment(sentiment)
             if sentiment < -0.12:
                 numNegative += 1
             elif sentiment < 0.12:
