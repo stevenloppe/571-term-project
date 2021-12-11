@@ -257,9 +257,11 @@ class Tweet(models.Model):
         topLikedTweet2Likes = 1
         topLikedTweet2Id = 0
 
+        totalRetweets = 0
+        for t in tweets:
+            totalRetweets += (t.retweet_count + 1)
 
         for t in tweets:
-
             if t.favorite_count > topLikedTweetLikes:
                 topLikedTweetLikes = t.favorite_count
                 topLikedTweetId = t.id
@@ -270,7 +272,11 @@ class Tweet(models.Model):
                 topLikedTweet2Likes = t.favorite_count
                 topLikedTweet2Id = t.id
             sentiment = t.getSentimentAndUpdate()
-            sentimentSum += sentiment
+            # sentiment = getSentiment()
+
+            # SentimentScore = Sum(individualSentimentScores * fraction of retweets)
+            sentimentSum += sentiment * ((t.retweet_count + 1)/totalRetweets)
+            # t.updateSentiment(sentiment)
             if sentiment < -0.12:
                 numNegative += 1
             elif sentiment < 0.12:
@@ -280,7 +286,7 @@ class Tweet(models.Model):
 
         # sentimentScore is an integer, not a float so for now multiplying them by 100 so it isn't saved as 0
         if len(tweets) > 0:
-            sentimentScore = (sentimentSum / len(tweets) ) * 100
+            sentimentScore = (sentimentSum) * 100
         else:
             sentimentScore = 0 
 

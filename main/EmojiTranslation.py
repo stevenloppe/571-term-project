@@ -1,5 +1,6 @@
 import csv
 
+
 def emojiSentiment(inputList):
 
     #inputList = ['🤷\u200d♂️', '✊', '✊🏻', '✊🏿']
