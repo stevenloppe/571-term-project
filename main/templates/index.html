@@ -53,7 +53,7 @@
                   {% for stock in analyses %}
                   <!-- <li>{{ choice.choice_text }} -- {{ choice.votes }} vote{{ choice.votes|pluralize }}</li> -->
                     <tr>
-                      <th scope="row">{{stock.stockTicker}}</th>
+                      <th scope="row"><a href="/{{stock.stockTicker}}">{{stock.stockTicker}}</a></th>
                       <td>{{stock.sentimentScore}}</td>
                       <td>{{stock.numTweets}}</td>
                       <td>{{stock.lastUpdated}} UTC</td>
