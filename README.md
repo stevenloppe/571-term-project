@@ -22,6 +22,7 @@ Packages:
 - `pip install emoji`
 - `pip install regex`
 - `pip install twitter`
+- `pip install lxml`
 - `pip install beautifulsoup4`
 - `pip install stanza`
 

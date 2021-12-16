@@ -129,7 +129,7 @@ def evaluateModel(request):
             tickers = BIG_TICKERS
         else:
             # split comma separated string into list and trim off whitespace
-            tickers = [ticker.strip() for ticker in tickers.split(',')]
+            tickers = [ticker.strip().upper() for ticker in tickers.split(',')]
         
 
     if startDate is None:
