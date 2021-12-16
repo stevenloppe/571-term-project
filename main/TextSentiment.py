@@ -174,7 +174,15 @@ def textSentiment(arg1):
     #for key, value in totals.items():
     #    print(f"    {key}: {str(value)} - {value * 100.0 / total}%")
 
-    return sentiment
+
+    # sentiment is typically between -2 and 2 but can go as high as or higher than -5/+5
+    # Thus the sentiment is now hard capped between -2 to 2, and converted to be between -1/1
+    if sentiment > 2:
+        sentiment = 2
+    elif sentiment < -2:
+        sentiment = -2
+
+    return (sentiment/2)
 
 
 

@@ -63,8 +63,9 @@ class Tweet(models.Model):
     # If we ever update our analysis the precalculated sentiments would become invalid so we have
     # A version number on each tweet to tell us which version of the analysis we have.
     # This global variable is what we will increment if we change our analysis.
-    CURRENT_SENTIMENT_VERSION = 1
 
+    CURRENT_SENTIMENT_VERSION = 2
+    # Version 2 update: textSentiment hard capped between -1/1
 
 
     # Extract Emojis
@@ -103,6 +104,9 @@ class Tweet(models.Model):
         emojiWeight = (new_emojis_len / (text_len + new_emojis_len))
 
         sentiment = (emoji_sentiment*2-1)*emojiWeight + (text_sentiment)*textWeight
+
+        # max: 4.90833492822967
+        # min: -5.903487525983346
 
         return sentiment
 
